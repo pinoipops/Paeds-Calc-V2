@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0,
+             viewport-fit=cover"
+  >
+
+  <meta
+    name="theme-color"
+    content="#ffffff"
+  >
+
+  <title>Weight-Based Calculator</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+</head>
+
+<body>
+
+<main class="app">
+
+  <!-- =========================
+       HEADER
+       ========================= -->
+
+  <header class="hero">
+
+    <h1>
+      Weight-Based Calculator
+    </h1>
+
+    <p>
+      Pediatric Dosing Tool
+    </p>
+
+  </header>
+
+
+  <!-- =========================
+       QUICK MEDICATION BUTTONS
+       ========================= -->
+
+  <section
+    class="quick-chips"
+    id="quickChips"
+  ></section>
+
+
+  <!-- =========================
+       MAIN CALCULATOR
+       ========================= -->
+
+  <section class="calculator">
+
+    <!-- WEIGHT -->
+
+    <div class="field">
+
+      <label for="weight">
+        PATIENT WEIGHT (KG)
+      </label>
+
+      <input
+        id="weight"
+        type="number"
+        min="0.1"
+        step="0.1"
+        inputmode="decimal"
+        placeholder="e.g. 15"
+      >
+
+    </div>
+
+
+    <!-- AGE -->
+
+    <div class="field">
+
+      <label for="age">
+        PATIENT AGE
+      </label>
+
+      <input
+        id="age"
+        type="number"
+        min="0"
+        step="0.1"
+        inputmode="decimal"
+        placeholder="e.g. 4"
+      >
+
+    </div>
+
+
+    <!-- MEDICATION -->
+
+    <div class="field">
+
+      <label for="medication">
+        MEDICATION
+      </label>
+
+      <div class="select-wrap">
+
+        <select id="medication"></select>
+
+      </div>
+
+    </div>
+
+
+    <!-- CONCENTRATION -->
+
+    <div class="field">
+
+      <label for="concentration">
+        CONCENTRATION
+      </label>
+
+      <div class="select-wrap">
+
+        <select id="concentration"></select>
+
+      </div>
+
+    </div>
+
+
+    <!-- DOSING REGIMEN -->
+
+    <div class="field">
+
+      <label for="regimen">
+        DOSING REGIMEN
+      </label>
+
+      <div class="select-wrap">
+
+        <select id="regimen"></select>
+
+      </div>
+
+    </div>
+
+
+    <!-- CALCULATE BUTTON -->
+
+    <button
+      class="calculate"
+      id="calculate"
+    >
+      Calculate
+    </button>
+
+
+    <!-- RESULT -->
+
+    <div
+      class="protocol hidden"
+      id="protocol"
+    ></div>
+
+  </section>
+
+
+  <!-- =========================
+       DIVIDER
+       ========================= -->
+
+  <div class="divider"></div>
+
+
+  <!-- =========================
+       REGIMEN BUILDER
+       ========================= -->
+
+  <section class="regimen-builder">
+
+    <h2>
+      Regimen Builder
+    </h2>
+
+    <p>
+      Add and manage patient medication regimen
+    </p>
+
+
+    <!-- REGIMEN LIST -->
+
+    <div
+      class="regimen-list"
+      id="regimenList"
+    >
+
+      <div class="empty-state">
+
+        <div class="plus-circle">
+          +
+        </div>
+
+        <strong>
+          No medications added yet.
+        </strong>
+
+        <span>
+          Tap “+ Add Medication” to start
+          building the regimen.
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- REGIMEN BUTTONS -->
+
+    <div class="regimen-actions">
+
+      <button
+        class="outline-btn"
+        id="addMedication"
+      >
+        ＋&nbsp; Add Medication
+      </button>
+
+
+      <button
+        class="dark-btn"
+        id="savedRegimens"
+      >
+        ▱&nbsp; Saved Regimens
+        (<span id="savedCount">0</span>)
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       ADD MEDICATION MODAL
+       ========================= -->
+
+  <div
+    class="modal hidden"
+    id="modal"
+  >
+
+    <div class="modal-card">
+
+      <button
+        class="close"
+        id="closeModal"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+
+      <h3>
+        Add Medication
+      </h3>
+
+      <p>
+        Create a quick regimen entry
+        for this patient.
+      </p>
+
+
+      <!-- MEDICATION -->
+
+      <div class="modal-field">
+
+        <label>
+          Medication
+        </label>
+
+        <input
+          id="customMed"
+          placeholder="e.g. Paracetamol"
+        >
+
+      </div>
+
+
+      <!-- FORMULATION -->
+
+      <div class="modal-field">
+
+        <label>
+          Formulation
+        </label>
+
+        <input
+          id="customForm"
+          placeholder="e.g. 120 mg/5 mL"
+        >
+
+      </div>
+
+
+      <!-- DOSE -->
+
+      <div class="modal-field">
+
+        <label>
+          Dose / Volume
+        </label>
+
+        <input
+          id="customDose"
+          placeholder="e.g. 7.5 mL"
+        >
+
+      </div>
+
+
+      <!-- FREQUENCY -->
+
+      <div class="modal-field">
+
+        <label>
+          Frequency
+        </label>
+
+        <input
+          id="customFreq"
+          placeholder="e.g. QID PRN"
+        >
+
+      </div>
+
+
+      <!-- SAVE -->
+
+      <button
+        class="calculate"
+        id="saveCustom"
+      >
+        Add to Regimen
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       FOOTER
+       ========================= -->
+
+  <footer>
+    Pediatric Dose Calculator • V2
+  </footer>
+
+</main>
+
+
+<!-- =========================
+     JAVASCRIPT
+     ========================= -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
