@@ -1,0 +1,459 @@
+*{
+  box-sizing:border-box
+}
+
+:root{
+  --ink:#121827;
+  --muted:#6d7482;
+  --soft:#f5f5f7;
+  --line:#e2e3e7;
+  --green:#2f6b3d;
+  --green-bg:#f1fbf3;
+  --green-line:#b9efc7;
+}
+
+html{
+  background:#fff
+}
+
+body{
+  margin:0;
+  background:#fff;
+  color:var(--ink);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+.app{
+  width:min(100%,820px);
+  margin:0 auto;
+  padding:42px 38px 28px;
+}
+
+.hero{
+  margin-bottom:28px
+}
+
+.hero h1{
+  font-size:38px;
+  line-height:1.1;
+  letter-spacing:-1.4px;
+  margin:0 0 8px;
+  font-weight:750;
+}
+
+.hero p{
+  font-size:24px;
+  line-height:1.25;
+  color:#777e8c;
+  margin:0;
+  font-weight:450;
+}
+
+.quick-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px 15px;
+  margin:0 0 52px;
+}
+
+.quick-chips button{
+  appearance:none;
+  background:#fff;
+  color:#717887;
+  border:2px solid #e2e4e9;
+  border-radius:999px;
+  padding:10px 28px;
+  font-size:22px;
+  line-height:1.25;
+  font-weight:450;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+.quick-chips button.active{
+  border-color:#1b2230;
+  color:#171e2b;
+  background:#fafafa;
+}
+
+.quick-chips button:active{
+  transform:scale(.98);
+}
+
+.field{
+  margin-bottom:34px;
+}
+
+.field label{
+  display:block;
+  color:#707785;
+  font-size:21px;
+  line-height:1.2;
+  letter-spacing:.8px;
+  margin:0 0 14px;
+  font-weight:650;
+}
+
+input,
+select{
+  width:100%;
+  height:74px;
+  border:0;
+  border-radius:16px;
+  background:#f5f5f7;
+  color:#151c2a;
+  font-size:25px;
+  padding:0 30px;
+  outline:none;
+  font-family:inherit;
+}
+
+input:focus,
+select:focus{
+  box-shadow:0 0 0 2px #d6d9df inset;
+}
+
+.select-wrap{
+  position:relative;
+}
+
+.select-wrap:after{
+  content:"⌄";
+  position:absolute;
+  right:26px;
+  top:18px;
+  font-size:30px;
+  color:#657080;
+  pointer-events:none;
+}
+
+select{
+  appearance:none;
+  padding-right:60px;
+}
+
+.calculate{
+  width:100%;
+  height:74px;
+  border:0;
+  border-radius:15px;
+  background:#111725;
+  color:#fff;
+  font-size:23px;
+  font-weight:650;
+  cursor:pointer;
+  font-family:inherit;
+}
+
+.calculate:active{
+  transform:scale(.995);
+}
+
+.protocol{
+  margin-top:34px;
+  border:2px solid var(--green-line);
+  background:var(--green-bg);
+  border-radius:16px;
+  padding:26px 38px;
+  color:var(--green);
+  font-size:25px;
+  line-height:1.35;
+}
+
+.protocol strong{
+  display:block;
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.protocol .main{
+  font-size:25px;
+}
+
+.protocol .sub{
+  font-size:16px;
+  color:#4f6f57;
+  margin-top:10px;
+}
+
+.protocol.warning{
+  border-color:#f1d18a;
+  background:#fffaf0;
+  color:#795b19;
+}
+
+.divider{
+  height:2px;
+  background:#ededee;
+  margin:74px 0 68px;
+}
+
+.regimen-builder h2{
+  font-size:32px;
+  letter-spacing:-.7px;
+  margin:0 0 7px;
+}
+
+.regimen-builder>p{
+  font-size:18px;
+  color:var(--muted);
+  margin:0 0 24px;
+}
+
+.regimen-list{
+  border:1px solid #e2e3e7;
+  border-radius:16px;
+  min-height:190px;
+  padding:24px;
+  background:#fff;
+}
+
+.empty-state{
+  min-height:140px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:#273043;
+  text-align:center;
+}
+
+.empty-state span{
+  color:#697181;
+  font-size:15px;
+}
+
+.plus-circle{
+  width:58px;
+  height:58px;
+  border:2px dashed #b8bec8;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:35px;
+  color:#697181;
+  margin-bottom:7px;
+}
+
+.regimen-actions{
+  display:flex;
+  gap:14px;
+  margin-top:18px;
+}
+
+.outline-btn,
+.dark-btn{
+  flex:1;
+  height:60px;
+  border-radius:13px;
+  font:600 17px/1 inherit;
+  cursor:pointer;
+}
+
+.outline-btn{
+  background:#fff;
+  border:2px solid #e0e2e6;
+  color:#1b2230;
+}
+
+.dark-btn{
+  background:#111725;
+  border:2px solid #111725;
+  color:#fff;
+}
+
+.regimen-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  border-bottom:1px solid #eceef1;
+  padding:12px 0;
+}
+
+.regimen-row:last-child{
+  border-bottom:0;
+}
+
+.regimen-row small{
+  display:block;
+  color:#747c89;
+  margin-top:4px;
+}
+
+.remove{
+  border:0;
+  background:transparent;
+  color:#a33;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(15,20,30,.38);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:16px;
+  z-index:20;
+}
+
+.modal-card{
+  background:#fff;
+  border-radius:22px;
+  width:min(100%,560px);
+  padding:26px;
+  position:relative;
+  box-shadow:0 15px 50px rgba(0,0,0,.2);
+}
+
+.modal-card h3{
+  font-size:27px;
+  margin:0 0 5px;
+}
+
+.modal-card p{
+  color:var(--muted);
+  margin:0 0 20px;
+}
+
+.modal-field{
+  margin-bottom:14px;
+}
+
+.modal-field label{
+  font-size:14px;
+  letter-spacing:.4px;
+  color:#6c7482;
+  margin-bottom:7px;
+  display:block;
+}
+
+.modal-field input{
+  height:55px;
+  font-size:17px;
+  padding:0 15px;
+}
+
+.close{
+  position:absolute;
+  right:16px;
+  top:12px;
+  border:0;
+  background:transparent;
+  font-size:30px;
+  color:#6b7280;
+  cursor:pointer;
+}
+
+footer{
+  text-align:center;
+  color:#a0a5ae;
+  font-size:12px;
+  margin-top:40px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:600px){
+
+  .app{
+    padding:36px 38px 26px;
+  }
+
+  .hero h1{
+    font-size:35px;
+  }
+
+  .hero p{
+    font-size:24px;
+  }
+
+  .quick-chips{
+    gap:13px 14px;
+    margin-bottom:49px;
+  }
+
+  .quick-chips button{
+    font-size:20px;
+    padding:9px 27px;
+  }
+
+  .field{
+    margin-bottom:33px;
+  }
+
+  .field label{
+    font-size:20px;
+  }
+
+  input,
+  select{
+    height:72px;
+    font-size:24px;
+    padding-left:29px;
+  }
+
+  .calculate{
+    height:72px;
+    font-size:22px;
+  }
+}
+
+@media(max-width:420px){
+
+  .app{
+    padding-left:38px;
+    padding-right:38px;
+  }
+
+  .hero h1{
+    font-size:34px;
+  }
+
+  .hero p{
+    font-size:23px;
+  }
+
+  .quick-chips button{
+    font-size:19px;
+    padding:9px 25px;
+  }
+
+  .field label{
+    font-size:19px;
+  }
+
+  input,
+  select{
+    font-size:22px;
+  }
+
+  .protocol{
+    padding:24px 28px;
+    font-size:22px;
+  }
+
+  .protocol strong,
+  .protocol .main{
+    font-size:22px;
+  }
+
+  .regimen-actions{
+    flex-direction:column;
+  }
+}
