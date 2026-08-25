@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="description" content="Minimalist pediatric clinical dose calculator for point-of-care medical practice.">
+  <title>Paeds Calc • Clinical Dose Calculator</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Paeds Calc">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --ink: #0f172a;
+      --ink-secondary: #475569;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --border-focus: #2563eb;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-text: #1d4ed8;
+      --green: #16a34a;
+      --green-soft: #f0fdf4;
+      --green-border: #86efac;
+      --green-text: #15803d;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --amber-border: #fcd34d;
+      --amber-text: #b45309;
+      --red: #dc2626;
+      --red-soft: #fef2f2;
+      --red-border: #fca5a5;
+      --red-text: #b91c1c;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #090d16;
+      --card-bg: #131b2e;
+      --card-border: #1e293b;
+      --ink: #f1f5f9;
+      --ink-secondary: #cbd5e1;
+      --muted: #94a3b8;
+      --border: #334155;
+      --border-focus: #3b82f6;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-soft: #1e293b;
+      --primary-text: #93c5fd;
+      --green: #22c55e;
+      --green-soft: #052e16;
+      --green-border: #15803d;
+      --green-text: #86efac;
+      --amber: #f59e0b;
+      --amber-soft: #451a03;
+      --amber-border: #92400e;
+      --amber-text: #fde68a;
+      --red: #ef4444;
+      --red-soft: #450a0a;
+      --red-border: #991b1b;
+      --red-text: #fca5a5;
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 8px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    button, input, select { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .app {
+      width: min(100%, 820px);
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 0 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), #1d4ed8);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.1;
+      letter-spacing: -0.8px;
+      font-weight: 800;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--primary-soft);
+      border-color: var(--border-focus);
+    }
+
+    .icon-btn.active {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+
+    /* Quick Chips Bar */
+    .chips-section {
+      margin-bottom: 16px;
+    }
+
+    .chips-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chips-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 2px 2px 8px;
+      scrollbar-width: thin;
+    }
+
+    .chip-btn {
+      flex: 0 0 auto;
+      padding: 7px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card-bg);
+      color: var(--ink-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .chip-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Main Calculator Card */
+    .calculator-card {
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px 24px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .field-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--ink);
+      font-size: 13px;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .field-aux-action {
+      font-size: 12px;
+      color: var(--primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .input-wrap, .select-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap input, .select-wrap select {
+      width: 100%;
+      height: 54px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--ink);
+      outline: none;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 0 46px 0 44px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .input-wrap input:focus, .select-wrap select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .field-icon {
+      position: absolute;
+      z-index: 2;
+      left: 14px;
+      color: var(--muted);
+      font-size: 18px;
+      pointer-events: none;
+      display: grid;
+      place-items: center;
+    }
+
+    .unit {
+      position: absolute;
+      right: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .select-wrap::after {
+      content: "⌄";
+      position: absolute;
+      right: 14px;
+      color: var(--muted);
+      font-size: 20px;
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .select-wrap select {
+      appearance: none;
+      padding-right: 38px;
+      cursor: pointer;
+    }
+
+    /* Stepper Buttons for Weight */
+    .weight-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .steppers {
+      display: flex;
+      gap: 5px;
+    }
+
+    .step-btn {
+      height: 54px;
+      padding: 0 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .step-btn:hover {
+      background: var(--primary-soft);
+      border-color: var(--border-focus);
+      color: var(--primary);
+    }
+
+    /* Medication Row with Star */
+    .medication-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .medication-row .select-wrap {
+      flex: 1;
+    }
+
+    .global-star {
+      height: 54px;
+      width: 54px;
+      flex: 0 0 54px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      font-size: 24px;
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .global-star:hover {
+      border-color: #f59e0b;
+      background: #fffbeb;
+    }
+
+    /* Drug Search Box */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--ink);
+      font-size: 14px;
+      padding: 0 12px 0 36px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    /* Result Card */
+    .result-card {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1.5px solid var(--green-border);
+      border-radius: var(--radius-lg);
+      background: var(--green-soft);
+      transition: all 0.2s ease;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .result-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green-text);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .result-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: var(--green);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .copy-rx-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--green-text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.12s ease;
+    }
+
+    [data-theme="dark"] .copy-rx-btn {
+      background: #1e293b;
+    }
+
+    .copy-rx-btn:hover {
+      background: var(--green);
+      color: #ffffff;
+      border-color: var(--green);
+    }
+
+    .result-main {
+      display: grid;
+      grid-template-columns: 1.2fr 1px 1fr;
+      align-items: center;
+      margin: 18px 0 16px;
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+      border: 1px solid var(--green-border);
+    }
+
+    .dose-block {
+      text-align: center;
+      padding: 0 12px;
+    }
+
+    .result-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .dose-block strong {
+      display: block;
+      color: var(--green-text);
+      font-size: 32px;
+      line-height: 1.1;
+      font-weight: 800;
+    }
+
+    .dose-block .vol-tag {
+      display: inline-block;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .dose-block .syringe-hint {
+      display: block;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    .dose-block strong.frequency {
+      font-size: 22px;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    #frequencySub {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 3px;
+    }
+
+    .result-divider {
+      width: 1px;
+      height: 70px;
+      background: var(--border);
+    }
+
+    /* Alert Banner (Capping / Precautions) */
+    .safety-alert {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius-md);
+      background: var(--amber-soft);
+      color: var(--amber-text);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .contra-alert {
+      border-color: var(--red-border);
+      background: var(--red-soft);
+      color: var(--red-text);
+    }
+
+    .calculation-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      padding: 12px 14px;
+      color: var(--ink-secondary);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .calculation-box strong {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    /* Notes Card */
+    .note-card {
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--card-border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--ink-secondary);
+    }
+
+    .note-icon {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .note-card strong {
+      color: var(--ink);
+      font-size: 14px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .note-card ul {
+      margin: 4px 0 0;
+      padding-left: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Modal / Favourites Sheet */
+    .favourites-card {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 18px;
+    }
+
+    .favourites-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .favourites-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .favourites-header p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .favourites-header button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 26px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .favourite-row {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+    }
+
+    .favourite-row strong {
+      font-size: 14px;
+    }
+
+    .favourite-row button {
+      border: 0;
+      background: var(--primary-soft);
+      color: var(--primary-text);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Weight Estimator Popover */
+    .est-weight-card {
+      margin-top: 8px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--primary-soft);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .est-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .est-row input, .est-row select {
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card-bg);
+      color: var(--ink);
+      padding: 0 10px;
+      font-size: 14px;
+    }
+
+    .est-apply-btn {
+      height: 38px;
+      padding: 0 14px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 24px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    footer strong { color: var(--ink-secondary); font-weight: 600; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 600px) {
+      .app { padding: 16px 14px 36px; }
+      .brand h1 { font-size: 22px; }
+      .brand-icon { width: 42px; height: 42px; font-size: 22px; }
+      .weight-row { grid-template-columns: 1fr; }
+      .steppers { width: 100%; justify-content: stretch; }
+      .step-btn { flex: 1; height: 44px; }
+      .result-main { grid-template-columns: 1fr; gap: 12px; }
+      .result-divider { width: 100%; height: 1px; }
+      .dose-block strong { font-size: 28px; }
+      .dose-block .vol-tag { font-size: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+<main class="app">
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">✚</div>
+      <div class="brand-title-wrap">
+        <h1>Paeds Calc</h1>
+        <p>Doctor's Rapid Dosing Engine</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle Theme">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <button class="icon-btn" id="favouriteToggle" type="button" title="Manage Favorites">
+        <span>★</span>
+        <span>Favs</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Quick Favorites Chips Bar -->
+  <section class="chips-section" aria-label="Quick Access Favourites">
+    <div class="chips-label">
+      <span>Quick Prescriptions</span>
+      <span style="font-size:10px; font-weight:500;">Live 1-Tap</span>
+    </div>
+    <div class="chips-scroll" id="quickChips"></div>
+  </section>
+
+  <!-- Favorites Modal/Drawer -->
+  <section class="favourites-card hidden" id="favouritesCard">
+    <div class="favourites-header">
+      <div>
+        <h2>Favorite Medications</h2>
+        <p>Tap to select or star medications to pin them.</p>
+      </div>
+      <button id="closeFavourites" type="button">×</button>
+    </div>
+    <div id="favouritesList"></div>
+  </section>
+
+  <!-- Calculator Input Card -->
+  <section class="calculator-card">
+
+    <!-- Weight Field with Stepper & Age Estimator -->
+    <div class="field" id="weightField">
+      <div class="field-header">
+        <label for="weight">Patient Weight (kg)</label>
+        <button type="button" class="field-aux-action" id="toggleAgeEst">Est. from Age</button>
+      </div>
+
+      <!-- Optional Age Estimator Box -->
+      <div class="est-weight-card hidden" id="ageEstBox">
+        <span style="font-weight:700; color:var(--ink);">APLS Weight Estimation</span>
+        <div class="est-row">
+          <input type="number" id="estAgeVal" min="1" max="15" placeholder="Age" style="width:70px;">
+          <select id="estAgeUnit">
+            <option value="years">Years</option>
+            <option value="months">Months</option>
+          </select>
+          <button type="button" class="est-apply-btn" id="applyEstWeight">Apply</button>
+        </div>
+      </div>
+
+      <div class="weight-row">
+        <div class="input-wrap">
+          <span class="field-icon">⚖</span>
+          <input id="weight" type="number" min="0.1" max="150" step="0.1"
+                 inputmode="decimal" placeholder="e.g. 14.5" autocomplete="off" autofocus>
+          <span class="unit">kg</span>
+        </div>
+        <div class="steppers">
+          <button type="button" class="step-btn" data-step="-1">-1</button>
+          <button type="button" class="step-btn" data-step="1">+1</button>
+          <button type="button" class="step-btn" data-step="5">+5</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medication Field with Instant Filter & Star -->
+    <div class="field">
+      <div class="field-header">
+        <label for="medication">Medication</label>
+      </div>
+
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="drugSearch" placeholder="Type to filter drug name or indication..." autocomplete="off">
+      </div>
+
+      <div class="medication-row">
+        <div class="select-wrap">
+          <span class="field-icon">💊</span>
+          <select id="medication"></select>
+        </div>
+        <button id="globalFavouriteBtn" class="global-star" type="button" aria-label="Toggle favourite" title="Toggle Favourite">☆</button>
+      </div>
+    </div>
+
+    <!-- Concentration Field -->
+    <div class="field">
+      <div class="field-header">
+        <label for="concentration">Formulation / Concentration</label>
+      </div>
+      <div class="select-wrap">
+        <span class="field-icon">▱</span>
+        <select id="concentration"></select>
+      </div>
+    </div>
+
+    <!-- Regimen Field -->
+    <div class="field">
+      <div class="field-header">
+        <label for="regimen">Clinical Regimen / Indication</label>
+      </div>
+      <div class="select-wrap">
+        <span class="field-icon">▣</span>
+        <select id="regimen"></select>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Live Calculation Result Card -->
+  <section class="result-card hidden" id="resultCard">
+    <div class="result-header">
+      <div class="result-title">
+        <span class="result-icon">✓</span>
+        <span>DOSE CALCULATION</span>
+      </div>
+      <button type="button" class="copy-rx-btn" id="copyRxBtn" title="Copy formatted prescription to clipboard">
+        <span>📋</span>
+        <span>Copy Rx</span>
+      </button>
+    </div>
+
+    <!-- Safety Banner (Rendered dynamically if capped or alerted) -->
+    <div id="safetyBanner" class="safety-alert hidden"></div>
+
+    <div class="result-main">
+      <div class="dose-block">
+        <span class="result-label">Dose Per Dose</span>
+        <strong id="doseValue">—</strong>
+        <span class="vol-tag" id="volumeValue">—</span>
+        <span class="syringe-hint hidden" id="syringeHint">Use 1 mL oral syringe</span>
+      </div>
+
+      <div class="result-divider"></div>
+
+      <div class="dose-block">
+        <span class="result-label">Frequency / Timing</span>
+        <strong class="frequency" id="frequencyValue">—</strong>
+        <span id="frequencySub"></span>
+      </div>
+    </div>
+
+    <div class="calculation-box">
+      <strong>Calculation Breakdown</strong>
+      <div id="calculationText"></div>
+    </div>
+  </section>
+
+  <!-- Important Notes / Precautions Card -->
+  <section class="note-card hidden" id="noteCard">
+    <div class="note-icon">i</div>
+    <div>
+      <strong>Clinical Note & Precautions</strong>
+      <ul id="noteList"></ul>
+    </div>
+  </section>
+
+  <!-- Toast for Copy Confirmation -->
+  <div class="toast" id="toast">
+    <span>✓</span>
+    <span id="toastMsg">Prescription copied to clipboard</span>
+  </div>
+
+  <footer>
+    <strong>Paeds Calc • Minimalist Clinical Engine</strong>
+    <span>Point-of-care pediatric dosing reference</span>
+  </footer>
+
+</main>
+
+<script>
+/*
+===================================================================
+PAEDS CALC • CLINICAL DATA FORMULARY & SAFE DOSING SPECIFICATIONS
+===================================================================
+*/
+
+const DATA = {
+
+  /* ================= ANALGESIC & NSAID ================= */
+  paracetamol: {
+    name: "Paracetamol (Syrup PCM)",
+    shortName: "PCM",
+    category: "Analgesics & Antipyretics",
+    dosing: "weight",
+    concentrations: [
+      { label: "250mg/5mL (50mg/mL)", mgPerMl: 50, default: true },
+      { label: "120mg/5mL (24mg/mL)", mgPerMl: 24 },
+      { label: "125mg/5mL (25mg/mL)", mgPerMl: 25 },
+      { label: "100mg/mL (Infant Drops)", mgPerMl: 100 }
+    ],
+    regimens: [
+      {
+        label: "15mg/kg/dose Q4–6H PRN (Standard Antipyretic)",
+        mgkg: 15,
+        maxDoseMg: 1000,
+        maxDailyMg: 4000,
+        frequency: "Q4–6H PRN",
+        frequencySub: "Every 4–6 hourly (Max 4 doses/24h)",
+        notes: ["Maximum 60mg/kg/day or adult ceiling 4000mg/day.", "Minimum 4-hour interval between doses."]
+      },
+      {
+        label: "10mg/kg/dose Q6H PRN (Mild / Neonatal)",
+        mgkg: 10,
+        maxDoseMg: 1000,
+        maxDailyMg: 2400,
+        frequency: "Q6H PRN",
+        frequencySub: "Every 6 hourly",
+        notes: ["Suitable for neonates or mild symptoms."]
+      }
+    ]
+  },
+
+  ibuprofen: {
+    name: "Ibuprofen (Syrup Ibuprofen)",
+    shortName: "Ibuprofen",
+    category: "Analgesics & Antipyretics",
+    dosing: "weight",
+    concentrations: [
+      { label: "100mg/5mL (20mg/mL)", mgPerMl: 20 },
+      { label: "200mg/5mL (40mg/mL)", mgPerMl: 40 }
+    ],
+    regimens: [
+      {
+        label: "10mg/kg/dose Q6–8H (Antipyretic / Analgesic)",
+        mgkg: 10,
+        maxDoseMg: 400,
+        maxDailyMg: 1200,
+        frequency: "Q6–8H PRN",
+        frequencySub: "Every 6–8 hourly (Max 3-4 doses/24h)",
+        notes: ["Take with or after food.", "Contraindicated in severe dehydration or active GI bleeding.", "Caution in asthmatics."]
+      },
+      {
+        label: "5mg/kg/dose Q8H (Mild fever / Pain)",
+        mgkg: 5,
+        maxDoseMg: 400,
+        maxDailyMg: 1200,
+        frequency: "TDS PRN",
+        frequencySub: "Three times daily",
+        notes: ["Take with food."]
+      }
+    ]
+  },
+
+  ponstan: {
+    name: "Ponstan (Syrup Mefenamic Acid)",
+    shortName: "Ponstan",
+    category: "Analgesics & Antipyretics",
+    dosing: "weight",
+    concentrations: [
+      { label: "50mg/5mL (10mg/mL)", mgPerMl: 10 }
+    ],
+    regimens: [
+      {
+        label: "6.5mg/kg/dose TDS (Max 7 days)",
+        mgkg: 6.5,
+        maxDoseMg: 250,
+        frequency: "TDS",
+        frequencySub: "Three times daily with food",
+        notes: ["Suitable for children >6 months only.", "Maximum duration: 7 days.", "Take with food."]
+      }
+    ]
+  },
+
+  /* ================= STEROIDS & RESPIRATORY ================= */
+  prednisolone: {
+    name: "Prednisolone (Syrup Prednisolone)",
+    shortName: "Prednisolone",
+    category: "Steroids & Respiratory",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "3mg/mL (15mg/5mL - Predsol)", mgPerMl: 3, default: true },
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1 }
+    ],
+    regimens: [
+      {
+        label: "Acute Asthma: 1–2 mg/kg/day OD × 3–5 days",
+        mgkgDay: 1,
+        divided: 1,
+        maxDoseMg: 40,
+        maxDailyMg: 40,
+        frequency: "OD in Morning × 3–5 days",
+        frequencySub: "Once daily with breakfast",
+        notes: ["Standard course for acute exacerbation: 3–5 days (no taper needed).", "Max 40mg/day (<12y), 50mg/day (≥12y). Take with food."]
+      },
+      {
+        label: "Severe Asthma / Croup: 2 mg/kg/day OD",
+        mgkgDay: 2,
+        divided: 1,
+        maxDoseMg: 60,
+        maxDailyMg: 60,
+        frequency: "OD in Morning × 3 days",
+        frequencySub: "Once daily with food",
+        notes: ["Short course for severe acute bronchospasm."]
+      }
+    ]
+  },
+
+  dexamethasone: {
+    name: "Dexamethasone Oral Solution",
+    shortName: "Dexamethasone",
+    category: "Steroids & Respiratory",
+    dosing: "weight",
+    concentrations: [
+      { label: "0.5mg/5mL (0.1mg/mL)", mgPerMl: 0.1 },
+      { label: "2mg/5mL (0.4mg/mL)", mgPerMl: 0.4 },
+      { label: "4mg/mL (Injection solution given orally)", mgPerMl: 4 }
+    ],
+    regimens: [
+      {
+        label: "Croup (Laryngotracheobronchitis): 0.15 mg/kg STAT",
+        mgkg: 0.15,
+        maxDoseMg: 10,
+        frequency: "STAT Dose",
+        frequencySub: "Single oral dose",
+        notes: ["0.15 mg/kg is as effective as 0.6 mg/kg for mild-to-moderate croup.", "May repeat in 12-24h if clinically indicated."]
+      },
+      {
+        label: "Severe Croup / Airway Edema: 0.6 mg/kg STAT",
+        mgkg: 0.6,
+        maxDoseMg: 16,
+        frequency: "STAT Dose",
+        frequencySub: "Single oral dose",
+        notes: ["For severe croup or post-extubation stridor."]
+      }
+    ]
+  },
+
+  /* ================= ANTIBIOTICS ================= */
+  amoxicillin: {
+    name: "Amoxicillin",
+    shortName: "Amoxicillin",
+    category: "Antibiotics",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "250mg/5mL (50mg/mL)", mgPerMl: 50, default: true },
+      { label: "125mg/5mL (25mg/mL)", mgPerMl: 25 }
+    ],
+    regimens: [
+      {
+        label: "Standard RTI / ENT: 30–50 mg/kg/day divided TDS",
+        mgkgDay: 40,
+        divided: 3,
+        maxDoseMg: 500,
+        maxDailyMg: 1500,
+        frequency: "TDS",
+        frequencySub: "Three times daily (8 hourly)"
+      },
+      {
+        label: "High-Dose (AOM / CAP): 80–90 mg/kg/day divided BD",
+        mgkgDay: 90,
+        divided: 2,
+        maxDoseMg: 1000,
+        maxDailyMg: 2000,
+        frequency: "BD",
+        frequencySub: "Twice daily (12 hourly)",
+        notes: ["High-dose protocol for acute otitis media or community pneumonia."]
+      },
+      {
+        label: "Mild Dose: 25 mg/kg/day divided BD",
+        mgkgDay: 25,
+        divided: 2,
+        maxDoseMg: 500,
+        frequency: "BD",
+        frequencySub: "Twice daily"
+      }
+    ]
+  },
+
+  augmentin: {
+    name: "Augmentin (Co-Amoxiclav)",
+    shortName: "Augmentin",
+    category: "Antibiotics",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "200/28.5mg/5mL (40mg/mL Amox)", mgPerMl: 40, default: true },
+      { label: "400/57mg/5mL (80mg/mL Amox - Forte)", mgPerMl: 80 },
+      { label: "125/31.25mg/5mL (25mg/mL Amox)", mgPerMl: 25 },
+      { label: "600/42.9mg/5mL (120mg/mL Amox - ES)", mgPerMl: 120 }
+    ],
+    regimens: [
+      {
+        label: "Standard (Mild–Mod): 25–45 mg/kg/day divided BD",
+        mgkgDay: 30,
+        divided: 2,
+        maxDoseMg: 875,
+        maxDailyMg: 1750,
+        frequency: "BD",
+        frequencySub: "Twice daily with meals",
+        notes: ["Give at start of meals to minimize gastrointestinal discomfort."]
+      },
+      {
+        label: "High-Dose (AOM / Sinusitis): 80–90 mg/kg/day divided BD",
+        mgkgDay: 90,
+        divided: 2,
+        maxDoseMg: 1000,
+        maxDailyMg: 2000,
+        frequency: "BD",
+        frequencySub: "Twice daily with meals",
+        notes: ["Prefer 7:1 ratio (Augmentin 200 or 400) or 14:1 (ES-600) to avoid clavulanate-induced diarrhea."]
+      }
+    ]
+  },
+
+  cloxacillin: {
+    name: "Cloxacillin (Syrup Cloxacillin)",
+    shortName: "Cloxacillin",
+    category: "Antibiotics",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "125mg/5mL (25mg/mL)", mgPerMl: 25 },
+      { label: "250mg/5mL (50mg/mL)", mgPerMl: 50 }
+    ],
+    regimens: [
+      {
+        label: "Skin / Soft Tissue: 50 mg/kg/day divided QID",
+        mgkgDay: 50,
+        divided: 4,
+        maxDoseMg: 500,
+        maxDailyMg: 2000,
+        frequency: "QID",
+        frequencySub: "Four times daily (1 hour before food)",
+        notes: ["Take on an empty stomach (1 hour before or 2 hours after meals)."]
+      },
+      {
+        label: "Severe Staphylococcal: 100 mg/kg/day divided QID",
+        mgkgDay: 100,
+        divided: 4,
+        maxDoseMg: 1000,
+        maxDailyMg: 4000,
+        frequency: "QID",
+        frequencySub: "Four times daily"
+      }
+    ]
+  },
+
+  cefixime: {
+    name: "Cefixime (Syrup Cefixime)",
+    shortName: "Cefixime",
+    category: "Antibiotics",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "100mg/5mL (20mg/mL)", mgPerMl: 20 }
+    ],
+    regimens: [
+      {
+        label: "UTI / ENT / RTI: 8 mg/kg/day OD or divided BD",
+        mgkgDay: 8,
+        divided: 1,
+        maxDoseMg: 400,
+        maxDailyMg: 400,
+        frequency: "OD",
+        frequencySub: "Once daily (or 4mg/kg BD)",
+        notes: ["3rd generation oral cephalosporin. Max 400mg/day."]
+      }
+    ]
+  },
+
+  cephalexin: {
+    name: "Cephalexin",
+    shortName: "Cephalexin",
+    category: "Antibiotics",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "125mg/5mL (25mg/mL)", mgPerMl: 25 },
+      { label: "250mg/5mL (50mg/mL)", mgPerMl: 50 }
+    ],
+    regimens: [
+      {
+        label: "Standard: 25–50 mg/kg/day divided QID",
+        mgkgDay: 25,
+        divided: 4,
+        maxDoseMg: 500,
+        maxDailyMg: 2000,
+        frequency: "QID",
+        frequencySub: "Four times daily (every 6h)"
+      }
+    ]
+  },
+
+  cefuroxime: {
+    name: "Cefuroxime Axetil",
+    shortName: "Cefuroxime",
+    category: "Antibiotics",
+    dosing: "weightDay",
+    concentrations: [
+      { label: "125mg/5mL (25mg/mL)", mgPerMl: 25 }
+    ],
+    regimens: [
+      {
+        label: "30 mg/kg/day divided BD",
+        mgkgDay: 30,
+        divided: 2,
+        maxDoseMg: 500,
+        maxDailyMg: 1000,
+        frequency: "BD",
+        frequencySub: "Twice daily with food",
+        notes: ["Take with food to enhance absorption and mask bitter taste."]
+      }
+    ]
+  },
+
+  azithromycin: {
+    name: "Azithromycin",
+    shortName: "Azithro",
+    category: "Antibiotics",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "200mg/5mL (40mg/mL)", mgPerMl: 40 }
+    ],
+    regimens: [
+      { label: "<15kg: 10mg/kg/day × 3 days", maxWeight: 14.99, mgkgDay: 10, divided: 1, maxDoseMg: 500, frequency: "OD × 3 days", frequencySub: "Once daily 1h before or 2h after food" },
+      { label: "15–25kg: 200mg OD × 3 days", minWeight: 15, maxWeight: 25.99, fixedMg: 200, frequency: "OD × 3 days", frequencySub: "Once daily" },
+      { label: "26–35kg: 300mg OD × 3 days", minWeight: 26, maxWeight: 35.99, fixedMg: 300, frequency: "OD × 3 days", frequencySub: "Once daily" },
+      { label: "36–45kg: 400mg OD × 3 days", minWeight: 36, maxWeight: 45.99, fixedMg: 400, frequency: "OD × 3 days", frequencySub: "Once daily" },
+      { label: ">45kg: 500mg OD × 3 days", minWeight: 46, fixedMg: 500, frequency: "OD × 3 days", frequencySub: "Once daily" }
+    ],
+    notes: ["Total 3-day course (or 5-day: 10mg/kg D1, then 5mg/kg D2–5)."]
+  },
+
+  /* ================= ANTIHISTAMINES & ALLERGY ================= */
+  cetirizine: {
+    name: "Cetirizine (Syrup Cetirizine)",
+    shortName: "Cetirizine",
+    category: "Antihistamines & Allergy",
+    dosing: "weight",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.25 mg/kg/dose OD–BD (Max 10mg/day)",
+        mgkg: 0.25,
+        maxDoseMg: 5,
+        maxDailyMg: 10,
+        frequency: "OD to BD",
+        frequencySub: "Once or twice daily",
+        notes: ["Children 2–6y: Max 5mg (5mL) daily.", "Children >6y: 10mg (10mL) daily.", "Non-sedating antihistamine."]
+      }
+    ]
+  },
+
+  loratadine: {
+    name: "Loratadine (Syrup Loratadine)",
+    shortName: "Loratadine",
+    category: "Antihistamines & Allergy",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      { label: "<30kg: 5mg OD", maxWeight: 29.99, fixedMg: 5, frequency: "OD", frequencySub: "Once daily", notes: ["Not recommended under 2 years."] },
+      { label: "≥30kg: 10mg OD", minWeight: 30, fixedMg: 10, frequency: "OD", frequencySub: "Once daily" }
+    ]
+  },
+
+  piriton: {
+    name: "Piriton (Syrup Chlorpheniramine)",
+    shortName: "Piriton",
+    category: "Antihistamines & Allergy",
+    dosing: "weight",
+    concentrations: [
+      { label: "2mg/5mL (0.4mg/mL)", mgPerMl: 0.4 }
+    ],
+    regimens: [
+      {
+        label: "0.1 mg/kg/dose TDS (Max 4mg/dose)",
+        mgkg: 0.1,
+        maxDoseMg: 4,
+        maxDailyMg: 12,
+        frequency: "TDS",
+        frequencySub: "Three times daily (Max 4 doses in 24h)",
+        notes: ["Sedating antihistamine. Cap at 4mg (10mL) per dose.", "Avoid in infants <1 year without specialist advice."]
+      }
+    ]
+  },
+
+  phenergan: {
+    name: "Phenergan (Syrup Promethazine)",
+    shortName: "Phenergan",
+    category: "Antihistamines & Allergy",
+    dosing: "weight",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.125 mg/kg/dose Q6–8H (Caution: >2y only)",
+        mgkg: 0.125,
+        maxDoseMg: 25,
+        frequency: "Q6–8H PRN",
+        frequencySub: "Every 6–8 hourly PRN",
+        notes: ["STRICTLY CONTRAINDICATED in children <2 years due to risk of fatal respiratory depression!"]
+      }
+    ]
+  },
+
+  benadryl: {
+    name: "Benadryl (Syrup Diphenhydramine)",
+    shortName: "Benadryl",
+    category: "Antihistamines & Allergy",
+    dosing: "weight",
+    concentrations: [
+      { label: "12.5mg/5mL (2.5mg/mL)", mgPerMl: 2.5 }
+    ],
+    regimens: [
+      {
+        label: "1.25 mg/kg/dose Q6H (Max 50mg/dose)",
+        mgkg: 1.25,
+        maxDoseMg: 50,
+        maxDailyMg: 300,
+        frequency: "Q6H PRN",
+        frequencySub: "Every 6 hourly PRN"
+      }
+    ]
+  },
+
+  /* ================= GASTROINTESTINAL ================= */
+  domperidone: {
+    name: "Domperidone (Syrup Domperidone)",
+    shortName: "Domperidone",
+    category: "Gastrointestinal",
+    dosing: "weight",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.25–0.4 mg/kg/dose TDS (Antiemetic)",
+        mgkg: 0.25,
+        maxDoseMg: 10,
+        maxDailyMg: 30,
+        frequency: "TDS (Before food)",
+        frequencySub: "Three times daily, 15-30 min before meals",
+        notes: ["Give 15–30 minutes before meals.", "Max 10mg per dose or 30mg/day."]
+      }
+    ]
+  },
+
+  buscopan: {
+    name: "Buscopan (Syrup Hyoscine Butylbromide)",
+    shortName: "Buscopan",
+    category: "Gastrointestinal",
+    dosing: "weight",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.5 mg/kg/dose TDS (Antispasmodic)",
+        mgkg: 0.5,
+        maxDoseMg: 10,
+        maxDailyMg: 30,
+        frequency: "TDS",
+        frequencySub: "Three times daily for abdominal spasm",
+        notes: ["Cap at 10mg (10mL) per dose."]
+      }
+    ]
+  },
+
+  colimix: {
+    name: "Colimix (Dicyclomine + Simethicone)",
+    shortName: "Colimix",
+    category: "Gastrointestinal",
+    dosing: "weight",
+    concentrations: [
+      { label: "Dicyclomine 5mg + Simethicone 50mg / 5mL", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.5 mg/kg/dose QID (Infant Colic)",
+        mgkg: 0.5,
+        maxDoseMg: 10,
+        frequency: "QID PRN",
+        frequencySub: "Four times daily",
+        notes: ["Contraindicated in infants under 6 months (risk of apnea / respiratory collapse)."]
+      }
+    ]
+  },
+
+  maxalon: {
+    name: "Maxalon (Syrup Metoclopramide)",
+    shortName: "Maxalon",
+    category: "Gastrointestinal",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      { label: "10–14kg: 1mg TDS", minWeight: 10, maxWeight: 14.99, fixedMg: 1, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: "15–19kg: 2mg TDS", minWeight: 15, maxWeight: 19.99, fixedMg: 2, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: "20–29kg: 2.5mg TDS", minWeight: 20, maxWeight: 29.99, fixedMg: 2.5, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: "30–60kg: 5mg TDS", minWeight: 30, maxWeight: 60, fixedMg: 5, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: ">60kg: 10mg TDS", minWeight: 60.01, fixedMg: 10, frequency: "Up to TDS", frequencySub: "Min 6h interval" }
+    ],
+    notes: [
+      "Second-line only. Contraindicated <1 year (high extrapyramidal / dystonia risk).",
+      "Minimum 6-hour interval between doses."
+    ]
+  },
+
+  /* ================= COUGH & RESPIRATORY ================= */
+  salmodil: {
+    name: "Salmodil (Salbutamol + Bromhexine)",
+    shortName: "Salmodil",
+    category: "Cough & Respiratory",
+    dosing: "weight",
+    concentrations: [
+      { label: "Salbutamol 2mg + Bromhexine 4mg / 5mL", mgPerMl: 0.4 }
+    ],
+    regimens: [
+      {
+        label: "0.1 mg/kg/dose (Based on Salbutamol) TDS",
+        mgkg: 0.1,
+        maxDoseMg: 2.0,
+        frequency: "TDS",
+        frequencySub: "Three times daily",
+        notes: ["Monitor for tremor or tachycardia."]
+      }
+    ]
+  },
+
+  tussidex: {
+    name: "Tussidex (Syrup Dextromethorphan)",
+    shortName: "Tussidex",
+    category: "Cough & Respiratory",
+    dosing: "weight",
+    concentrations: [
+      { label: "15mg/5mL (3mg/mL)", mgPerMl: 3.0 }
+    ],
+    regimens: [
+      {
+        label: "0.3 mg/kg/dose TDS (Dry Cough)",
+        mgkg: 0.3,
+        maxDoseMg: 15,
+        frequency: "TDS PRN",
+        frequencySub: "Three times daily for dry cough",
+        notes: ["Not recommended for children under 2 years. Cap at 15mg (5mL) per dose."]
+      }
+    ]
+  },
+
+  coughen: {
+    name: "Cough-En RX (DXM + Phenylephrine)",
+    shortName: "Cough-En",
+    category: "Cough & Respiratory",
+    dosing: "weight",
+    concentrations: [
+      { label: "15mg DXM + 5mg Phenylephrine / 5mL", mgPerMl: 3.0 }
+    ],
+    regimens: [
+      {
+        label: "0.3 mg/kg/dose TDS",
+        mgkg: 0.3,
+        maxDoseMg: 15,
+        frequency: "TDS PRN",
+        frequencySub: "Three times daily",
+        notes: ["Not for children under 2 years."]
+      }
+    ]
+  },
+
+  paedicof: {
+    name: "Paedicof (Pseudoephedrine)",
+    shortName: "Paedicof",
+    category: "Cough & Respiratory",
+    dosing: "weight",
+    concentrations: [
+      { label: "15mg Pseudoephedrine / 5mL", mgPerMl: 3.0 }
+    ],
+    regimens: [
+      {
+        label: "1 mg/kg/dose TDS (Nasal Decongestant)",
+        mgkg: 1.0,
+        maxDoseMg: 30,
+        frequency: "TDS",
+        frequencySub: "Three times daily"
+      }
+    ]
+  },
+
+  /* ================= NEBULIZER THERAPY ================= */
+  salbutamolNeb: {
+    name: "Salbutamol Nebuliser Solution",
+    shortName: "Salb Neb",
+    category: "Nebulizer Therapy",
+    dosing: "fixed",
+    concentrations: [
+      { label: "0.5% Solution (5mg/mL)", mgPerMl: 5.0 }
+    ],
+    regimens: [
+      { label: "2.5mg per nebulisation (<5 yrs)", fixedMg: 2.5, frequency: "PRN", frequencySub: "Dilute with 2–3 mL Normal Saline" },
+      { label: "5.0mg per nebulisation (≥5 yrs)", fixedMg: 5.0, frequency: "PRN", frequencySub: "Dilute with 2–3 mL Normal Saline" }
+    ]
+  },
+
+  ipratropiumNeb: {
+    name: "Ipratropium Nebuliser Solution",
+    shortName: "Atrovent Neb",
+    category: "Nebulizer Therapy",
+    dosing: "fixed",
+    concentrations: [
+      { label: "250mcg/mL (0.25mg/mL)", mcgPerMl: 250 }
+    ],
+    regimens: [
+      { label: "250mcg per nebulisation (<12 yrs)", fixedMcg: 250, frequency: "Q20m × 3 in acute severe, then Q4–6H", frequencySub: "Given with Salbutamol in acute asthma" }
+    ]
+  },
+
+  comboNeb: {
+    name: "Combivent UDV (Salbutamol + Ipratropium)",
+    shortName: "Combivent Neb",
+    category: "Nebulizer Therapy",
+    dosing: "fixed",
+    concentrations: [
+      { label: "Ipratropium 0.5mg + Salbutamol 2.5mg / 2.5mL UDV", fixedMl: 2.5 }
+    ],
+    regimens: [
+      { label: "1 Unit-Dose Vial (UDV) per neb", fixedMl: 2.5, frequency: "PRN", frequencySub: "Acute Bronchospasm Protocol" }
+    ]
+  }
+};
+
+/* ==================================================
+   STATE & PERSISTENCE
+   ================================================== */
+const FAV_KEY = "paedsCalcFavourites_v5";
+const THEME_KEY = "paedsCalcTheme";
+const LAST_WEIGHT_KEY = "paedsCalcLastWeight";
+const LAST_MED_KEY = "paedsCalcLastMed";
+
+let favourites = loadFavourites();
+let currentSearchTerm = "";
+
+/* DOM Elements */
+const weightInput = document.getElementById("weight");
+const medicationSelect = document.getElementById("medication");
+const globalFavouriteBtn = document.getElementById("globalFavouriteBtn");
+const concentrationSelect = document.getElementById("concentration");
+const regimenSelect = document.getElementById("regimen");
+const drugSearch = document.getElementById("drugSearch");
+const quickChips = document.getElementById("quickChips");
+
+const resultCard = document.getElementById("resultCard");
+const doseValue = document.getElementById("doseValue");
+const volumeValue = document.getElementById("volumeValue");
+const syringeHint = document.getElementById("syringeHint");
+const frequencyValue = document.getElementById("frequencyValue");
+const frequencySub = document.getElementById("frequencySub");
+const calculationText = document.getElementById("calculationText");
+const safetyBanner = document.getElementById("safetyBanner");
+const copyRxBtn = document.getElementById("copyRxBtn");
+
+const noteCard = document.getElementById("noteCard");
+const noteList = document.getElementById("noteList");
+
+const favouriteToggle = document.getElementById("favouriteToggle");
+const favouritesCard = document.getElementById("favouritesCard");
+const favouritesList = document.getElementById("favouritesList");
+const closeFavourites = document.getElementById("closeFavourites");
+
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+
+const toggleAgeEst = document.getElementById("toggleAgeEst");
+const ageEstBox = document.getElementById("ageEstBox");
+const estAgeVal = document.getElementById("estAgeVal");
+const estAgeUnit = document.getElementById("estAgeUnit");
+const applyEstWeight = document.getElementById("applyEstWeight");
+const toast = document.getElementById("toast");
+const toastMsg = document.getElementById("toastMsg");
+
+/* ==================================================
+   INITIALIZATION
+   ================================================== */
+initTheme();
+buildMedicationList();
+renderQuickChips();
+
+// Restore previous state if available
+const savedWeight = localStorage.getItem(LAST_WEIGHT_KEY);
+if (savedWeight) { weightInput.value = savedWeight; }
+
+const savedMed = localStorage.getItem(LAST_MED_KEY);
+if (savedMed && DATA[savedMed]) {
+  medicationSelect.value = savedMed;
+} else {
+  medicationSelect.value = "paracetamol";
+}
+
+updateMedicationFields();
+refreshShortcutState();
+calculateDose();
+
+/* ==================================================
+   THEME LOGIC
+   ================================================== */
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    document.documentElement.setAttribute("data-theme", "dark");
+    themeIcon.textContent = "☀️";
+  } else {
+    document.documentElement.setAttribute("data-theme", "light");
+    themeIcon.textContent = "🌙";
+  }
+}
+
+themeToggle.addEventListener("click", () => {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  if (isDark) {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem(THEME_KEY, "light");
+    themeIcon.textContent = "🌙";
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem(THEME_KEY, "dark");
+    themeIcon.textContent = "☀️";
+  }
+});
+
+/* ==================================================
+   FAVOURITES & CHIPS
+   ================================================== */
+function loadFavourites() {
+  try {
+    const saved = localStorage.getItem(FAV_KEY);
+    return saved ? JSON.parse(saved) : ["paracetamol", "ibuprofen", "augmentin", "amoxicillin", "cetirizine", "prednisolone", "domperidone"];
+  } catch {
+    return ["paracetamol", "ibuprofen", "augmentin", "cetirizine"];
+  }
+}
+
+function saveFavourites() {
+  localStorage.setItem(FAV_KEY, JSON.stringify(favourites));
+}
+
+function toggleFavourite(key) {
+  if (favourites.includes(key)) {
+    favourites = favourites.filter(k => k !== key);
+  } else {
+    favourites.push(key);
+  }
+  saveFavourites();
+  refreshShortcutState();
+  renderQuickChips();
+  renderFavourites();
+}
+
+function refreshShortcutState() {
+  if (globalFavouriteBtn) {
+    const currentMed = medicationSelect.value;
+    const isFav = favourites.includes(currentMed);
+    globalFavouriteBtn.style.color = isFav ? "#f59e0b" : "var(--muted)";
+    globalFavouriteBtn.textContent = isFav ? "★" : "☆";
+  }
+  // update active chip
+  document.querySelectorAll(".chip-btn").forEach(chip => {
+    if (chip.dataset.key === medicationSelect.value) {
+      chip.classList.add("active");
+    } else {
+      chip.classList.remove("active");
+    }
+  });
+}
+
+function renderQuickChips() {
+  quickChips.innerHTML = "";
+  favourites.forEach(key => {
+    const drug = DATA[key];
+    if (!drug) return;
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = `chip-btn ${medicationSelect.value === key ? "active" : ""}`;
+    chip.dataset.key = key;
+    chip.textContent = drug.shortName || drug.name.split(" ")[0];
+    chip.addEventListener("click", () => {
+      selectMedication(key);
+    });
+    quickChips.appendChild(chip);
+  });
+}
+
+/* ==================================================
+   MEDICATION DROPDOWN & FILTER
+   ================================================== */
+function buildMedicationList() {
+  medicationSelect.innerHTML = "";
+  const categories = [
+    "Analgesics & Antipyretics",
+    "Steroids & Respiratory",
+    "Antibiotics",
+    "Antihistamines & Allergy",
+    "Gastrointestinal",
+    "Cough & Respiratory",
+    "Nebulizer Therapy"
+  ];
+
+  const search = currentSearchTerm.toLowerCase().trim();
+
+  categories.forEach(category => {
+    const groupDrugs = Object.entries(DATA).filter(([key, drug]) => {
+      if (drug.category !== category) return false;
+      if (!search) return true;
+      const matchName = drug.name.toLowerCase().includes(search);
+      const matchShort = (drug.shortName || "").toLowerCase().includes(search);
+      const matchCategory = drug.category.toLowerCase().includes(search);
+      const matchRegimen = drug.regimens.some(r => (r.label || "").toLowerCase().includes(search));
+      return matchName || matchShort || matchCategory || matchRegimen;
+    });
+
+    if (groupDrugs.length > 0) {
+      const group = document.createElement("optgroup");
+      group.label = category;
+      groupDrugs.forEach(([key, drug]) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = drug.name;
+        group.appendChild(option);
+      });
+      medicationSelect.appendChild(group);
+    }
+  });
+
+  if (medicationSelect.options.length === 0) {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "No matching drugs found";
+    medicationSelect.appendChild(opt);
+  }
+}
+
+drugSearch.addEventListener("input", e => {
+  currentSearchTerm = e.target.value;
+  const prevVal = medicationSelect.value;
+  buildMedicationList();
+  if (DATA[prevVal] && Array.from(medicationSelect.options).some(o => o.value === prevVal)) {
+    medicationSelect.value = prevVal;
+  } else if (medicationSelect.options[0] && medicationSelect.options[0].value) {
+    medicationSelect.value = medicationSelect.options[0].value;
+    updateMedicationFields();
+  }
+  calculateDose();
+  refreshShortcutState();
+});
+
+function selectMedication(key) {
+  if (!DATA[key]) return;
+  medicationSelect.value = key;
+  localStorage.setItem(LAST_MED_KEY, key);
+  updateMedicationFields();
+  refreshShortcutState();
+  calculateDose();
+}
+
+function updateMedicationFields() {
+  const drug = DATA[medicationSelect.value];
+  if (!drug) return;
+
+  concentrationSelect.innerHTML = "";
+  regimenSelect.innerHTML = "";
+
+  drug.concentrations.forEach((item, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = item.label;
+    concentrationSelect.appendChild(option);
+  });
+
+  drug.regimens.forEach((item, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = item.label;
+    regimenSelect.appendChild(option);
+  });
+
+  const defaultIndex = drug.concentrations.findIndex(item => item.default === true);
+  if (defaultIndex >= 0) {
+    concentrationSelect.value = defaultIndex;
+  }
+}
+
+/* ==================================================
+   WEIGHT ESTIMATOR & STEPPERS
+   ================================================== */
+toggleAgeEst.addEventListener("click", () => {
+  ageEstBox.classList.toggle("hidden");
+});
+
+applyEstWeight.addEventListener("click", () => {
+  const age = parseFloat(estAgeVal.value);
+  if (!age || age <= 0) return;
+  const unit = estAgeUnit.value;
+  let estimated = 0;
+
+  if (unit === "months") {
+    estimated = (age * 0.5) + 4; // < 1 yr formula
+  } else {
+    if (age <= 5) {
+      estimated = (age * 2) + 8; // 1-5 yrs
+    } else {
+      estimated = (age * 3) + 7; // 6-12 yrs
+    }
+  }
+
+  weightInput.value = round(estimated, 1);
+  localStorage.setItem(LAST_WEIGHT_KEY, weightInput.value);
+  ageEstBox.classList.add("hidden");
+  calculateDose();
+});
+
+document.querySelectorAll(".step-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const step = parseFloat(btn.dataset.step);
+    let cur = parseFloat(weightInput.value) || 10;
+    cur = Math.max(1, cur + step);
+    weightInput.value = round(cur, 1);
+    localStorage.setItem(LAST_WEIGHT_KEY, weightInput.value);
+    calculateDose();
+  });
+});
+
+/* ==================================================
+   MATCHING & PRECISION HELPERS
+   ================================================== */
+function matchesWeight(rule, weight) {
+  if (rule.minWeight !== undefined && weight < rule.minWeight) return false;
+  if (rule.maxWeight !== undefined && weight > rule.maxWeight) return false;
+  return true;
+}
+
+function round(number, decimals = 1) {
+  const factor = Math.pow(10, decimals);
+  return Math.round(number * factor) / factor;
+}
+
+function formatVolume(ml) {
+  if (ml < 1.0) {
+    return round(ml, 2).toFixed(2).replace(/\.?0+$/, "") + " mL";
+  }
+  return round(ml, 1) + " mL";
+}
+
+/* ==================================================
+   CALCULATION ENGINE (LIVE + SAFETY CAPPED)
+   ================================================== */
+function calculateDose() {
+  const weight = parseFloat(weightInput.value);
+  const drug = DATA[medicationSelect.value];
+  if (!drug) return;
+
+  const needsWeight = drug.dosing !== "fixed";
+
+  if (needsWeight && (!Number.isFinite(weight) || weight <= 0)) {
+    resultCard.classList.add("hidden");
+    noteCard.classList.add("hidden");
+    return;
+  }
+
+  let rule = drug.regimens[parseInt(regimenSelect.value, 10) || 0];
+
+  /* Auto-select weight band rule */
+  if (drug.dosing === "weightBand") {
+    const matching = drug.regimens.find(candidate => matchesWeight(candidate, weight));
+    if (matching) {
+      rule = matching;
+      regimenSelect.value = drug.regimens.indexOf(matching);
+    } else {
+      showError("Patient weight is out of range for this weight-band medication.");
+      return;
+    }
+  }
+
+  const concentration = drug.concentrations[parseInt(concentrationSelect.value, 10) || 0];
+  let mgDose = null;
+  let mlDose = null;
+  let calculation = "";
+  let isCapped = false;
+  let capReason = "";
+
+  safetyBanner.classList.add("hidden");
+  safetyBanner.classList.remove("contra-alert");
+
+  /* Contraindication Alerts */
+  if (drug === DATA.phenergan) {
+    safetyBanner.innerHTML = "⚠️ <strong>Contraindicated < 2 years</strong> (Risk of fatal respiratory depression)";
+    safetyBanner.classList.add("contra-alert");
+    safetyBanner.classList.remove("hidden");
+  } else if (drug === DATA.colimix) {
+    safetyBanner.innerHTML = "⚠️ <strong>Contraindicated < 6 months</strong> (Risk of respiratory collapse)";
+    safetyBanner.classList.add("contra-alert");
+    safetyBanner.classList.remove("hidden");
+  }
+
+  /* CASE 1: FIXED mL */
+  if (rule.fixedMl !== undefined) {
+    doseValue.textContent = `${rule.fixedMl} mL`;
+    volumeValue.textContent = "";
+    syringeHint.classList.add("hidden");
+    frequencyValue.textContent = rule.frequency || "—";
+    frequencySub.textContent = rule.frequencySub || "";
+    calculationText.textContent = "Fixed volume unit dose.";
+    showNotes(drug, rule);
+    resultCard.classList.remove("hidden");
+    return;
+  }
+
+  /* CASE 2: FIXED mcg */
+  if (rule.fixedMcg !== undefined) {
+    mlDose = rule.fixedMcg / concentration.mcgPerMl;
+    doseValue.textContent = `${rule.fixedMcg} mcg`;
+    volumeValue.textContent = `( ${formatVolume(mlDose)} )`;
+    syringeHint.classList.toggle("hidden", mlDose >= 1.0);
+    frequencyValue.textContent = rule.frequency || "—";
+    frequencySub.textContent = rule.frequencySub || "";
+    calculationText.innerHTML = `${rule.fixedMcg} mcg ÷ ${concentration.mcgPerMl} mcg/mL = <strong>${formatVolume(mlDose)}</strong>`;
+    showNotes(drug, rule);
+    resultCard.classList.remove("hidden");
+    return;
+  }
+
+  /* CASE 3: FIXED mg */
+  if (rule.fixedMg !== undefined) {
+    mgDose = rule.fixedMg;
+    mlDose = mgDose / concentration.mgPerMl;
+    calculation = `${mgDose} mg ÷ ${concentration.mgPerMl} mg/mL = <strong>${formatVolume(mlDose)}</strong>`;
+  }
+  /* CASE 4: mg/kg/dose */
+  else if (rule.mgkg !== undefined) {
+    const rawMg = rule.mgkg * weight;
+    mgDose = rawMg;
+
+    // Check Single Dose Cap
+    if (rule.maxDoseMg !== undefined && mgDose > rule.maxDoseMg) {
+      mgDose = rule.maxDoseMg;
+      isCapped = true;
+      capReason = `Capped at maximum single dose: <strong>${rule.maxDoseMg} mg</strong>`;
+    }
+
+    mlDose = mgDose / concentration.mgPerMl;
+    calculation = `${rule.mgkg} mg/kg × ${weight} kg = ${round(rawMg, 1)} mg${isCapped ? ` → <em>${capReason}</em>` : ""}<br>${round(mgDose, 1)} mg ÷ ${concentration.mgPerMl} mg/mL = <strong>${formatVolume(mlDose)}</strong>`;
+  }
+  /* CASE 5: mg/kg/day */
+  else if (rule.mgkgDay !== undefined) {
+    const rawDailyMg = rule.mgkgDay * weight;
+    let dailyMg = rawDailyMg;
+
+    // Check Daily Cap
+    if (rule.maxDailyMg !== undefined && dailyMg > rule.maxDailyMg) {
+      dailyMg = rule.maxDailyMg;
+      isCapped = true;
+      capReason = `Capped at maximum daily dose: <strong>${rule.maxDailyMg} mg/day</strong>`;
+    }
+
+    let perDoseMg = dailyMg / (rule.divided || 1);
+
+    // Check Single Dose Cap if any
+    if (rule.maxDoseMg !== undefined && perDoseMg > rule.maxDoseMg) {
+      perDoseMg = rule.maxDoseMg;
+      isCapped = true;
+      capReason = `Capped at maximum single dose: <strong>${rule.maxDoseMg} mg</strong>`;
+    }
+
+    mgDose = perDoseMg;
+    mlDose = mgDose / concentration.mgPerMl;
+    calculation = `${rule.mgkgDay} mg/kg/day × ${weight} kg ÷ ${rule.divided || 1} = ${round(perDoseMg, 1)} mg per dose${isCapped ? `<br><em>${capReason}</em>` : ""}<br>${round(mgDose, 1)} mg ÷ ${concentration.mgPerMl} mg/mL = <strong>${formatVolume(mlDose)}</strong>`;
+  }
+
+  if (mgDose === null) {
+    showError("Dose rule configuration error.");
+    return;
+  }
+
+  if (isCapped) {
+    safetyBanner.innerHTML = `⚠️ ${capReason} (Maximum Ceiling Enforced)`;
+    safetyBanner.classList.remove("hidden");
+  }
+
+  doseValue.textContent = `${round(mgDose, 1)} mg`;
+  volumeValue.textContent = `( ${formatVolume(mlDose)} )`;
+  syringeHint.classList.toggle("hidden", mlDose >= 1.0);
+  frequencyValue.textContent = rule.frequency || "—";
+  frequencySub.textContent = rule.frequencySub || "";
+  calculationText.innerHTML = calculation;
+
+  showNotes(drug, rule);
+  resultCard.classList.remove("hidden");
+}
+
+/* ==================================================
+   NOTES & ERROR DISPLAY
+   ================================================== */
+function showNotes(drug, rule) {
+  noteList.innerHTML = "";
+  const notes = [...(drug.notes || []), ...(rule.notes || [])];
+  if (!notes.length) {
+    noteCard.classList.add("hidden");
+    return;
+  }
+  [...new Set(notes)].forEach(note => {
+    const li = document.createElement("li");
+    li.textContent = note;
+    noteList.appendChild(li);
+  });
+  noteCard.classList.remove("hidden");
+}
+
+function showError(msg) {
+  resultCard.classList.remove("hidden");
+  noteCard.classList.add("hidden");
+  doseValue.textContent = "—";
+  volumeValue.textContent = "";
+  syringeHint.classList.add("hidden");
+  frequencyValue.textContent = "—";
+  frequencySub.textContent = "";
+  calculationText.textContent = msg;
+}
+
+/* ==================================================
+   PRESCRIPTION COPY TO CLIPBOARD
+   ================================================== */
+copyRxBtn.addEventListener("click", () => {
+  const drug = DATA[medicationSelect.value];
+  const conc = drug.concentrations[parseInt(concentrationSelect.value, 10) || 0];
+  const rule = drug.regimens[parseInt(regimenSelect.value, 10) || 0];
+  const weight = weightInput.value;
+
+  const dose = doseValue.textContent;
+  const vol = volumeValue.textContent.replace(/[()]/g, "").trim();
+  const freq = frequencyValue.textContent;
+
+  let rxText = `Rx: ${drug.name} (${conc.label})\n`;
+  rxText += `Dose: ${vol ? `${vol} (${dose})` : dose} ${freq}\n`;
+  if (weight) {
+    rxText += `Patient Weight: ${weight} kg [${rule.label}]`;
+  }
+
+  navigator.clipboard.writeText(rxText).then(() => {
+    showToast("Prescription copied to clipboard! ✓");
+  }).catch(() => {
+    // Fallback for older browsers
+    const temp = document.createElement("textarea");
+    temp.value = rxText;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand("copy");
+    document.body.removeChild(temp);
+    showToast("Prescription copied! ✓");
+  });
+});
+
+function showToast(msg) {
+  toastMsg.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
+}
+
+/* ==================================================
+   FAVOURITES MANAGER DRAWER
+   ================================================== */
+function renderFavourites() {
+  favouritesList.innerHTML = "";
+  if (!favourites.length) {
+    favouritesList.innerHTML = "<p style='color:var(--muted); font-size:13px;'>No favorites selected yet.</p>";
+    return;
+  }
+  favourites.forEach(key => {
+    if (!DATA[key]) return;
+    const row = document.createElement("div");
+    row.className = "favourite-row";
+    row.innerHTML = `
+      <strong>${escapeHtml(DATA[key].name)}</strong>
+      <button type="button">Select</button>
+    `;
+    row.querySelector("button").addEventListener("click", () => {
+      selectMedication(key);
+      favouritesCard.classList.add("hidden");
+      favouriteToggle.classList.remove("active");
+    });
+    favouritesList.appendChild(row);
+  });
+}
+
+favouriteToggle.addEventListener("click", () => {
+  favouritesCard.classList.toggle("hidden");
+  favouriteToggle.classList.toggle("active");
+  renderFavourites();
+});
+
+closeFavourites.addEventListener("click", () => {
+  favouritesCard.classList.add("hidden");
+  favouriteToggle.classList.remove("active");
+});
+
+if (globalFavouriteBtn) {
+  globalFavouriteBtn.addEventListener("click", () => {
+    toggleFavourite(medicationSelect.value);
+  });
+}
+
+/* ==================================================
+   EVENT LISTENERS (LIVE REACTIVE CALCULATIONS)
+   ================================================== */
+weightInput.addEventListener("input", () => {
+  localStorage.setItem(LAST_WEIGHT_KEY, weightInput.value);
+  calculateDose();
+});
+
+medicationSelect.addEventListener("change", () => {
+  localStorage.setItem(LAST_MED_KEY, medicationSelect.value);
+  updateMedicationFields();
+  refreshShortcutState();
+  calculateDose();
+});
+
+concentrationSelect.addEventListener("change", calculateDose);
+regimenSelect.addEventListener("change", calculateDose);
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[char]));
+}
+
+/* ==================================================
+   PWA SERVICE WORKER REGISTRATION
+   ================================================== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('ServiceWorker registered with scope:', reg.scope))
+      .catch(err => console.log('ServiceWorker registration error:', err));
+  });
+}
+</script>
+</body>
+</html>
