@@ -471,18 +471,25 @@
       font-weight: 800;
     }
 
+    .rx-btn-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
     .copy-rx-btn {
-      padding: 6px 14px;
+      padding: 6px 12px;
       border: 1px solid var(--green-border);
       border-radius: 8px;
       background: #ffffff;
       color: var(--green-text);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       box-shadow: var(--shadow-sm);
       transition: all 0.12s ease;
     }
@@ -495,6 +502,87 @@
       background: var(--green);
       color: #ffffff;
       border-color: var(--green);
+    }
+
+    .copy-parent-btn {
+      border-color: var(--primary);
+      color: var(--primary-text);
+      background: var(--primary-soft);
+    }
+
+    .copy-parent-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Clinic Dispensing Box */
+    .dispensing-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1.5px dashed var(--green-border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+    }
+
+    .dispensing-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .dispensing-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--green-text);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .duration-chips {
+      display: flex;
+      gap: 4px;
+    }
+
+    .dur-chip {
+      padding: 3px 9px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--ink-secondary);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .dur-chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .dur-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .dispense-result {
+      font-size: 13.5px;
+      color: var(--ink);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .dispense-result strong {
+      color: var(--green-text);
+      font-weight: 800;
     }
 
     .result-main {
@@ -940,10 +1028,16 @@
         <span class="result-icon">✓</span>
         <span>DOSE CALCULATION</span>
       </div>
-      <button type="button" class="copy-rx-btn" id="copyRxBtn" title="Copy formatted prescription to clipboard">
-        <span>📋</span>
-        <span>Copy Rx</span>
-      </button>
+      <div class="rx-btn-group">
+        <button type="button" class="copy-rx-btn" id="copyRxBtn" title="Copy standard EMR prescription text">
+          <span>📋</span>
+          <span>Copy Rx</span>
+        </button>
+        <button type="button" class="copy-rx-btn copy-parent-btn" id="copyParentBtn" title="Copy parent-friendly instructions for WhatsApp or Patient label">
+          <span>📱</span>
+          <span>For Parent</span>
+        </button>
+      </div>
     </div>
 
     <!-- Safety Banner (Rendered dynamically if capped or alerted) -->
@@ -966,7 +1060,23 @@
       </div>
     </div>
 
-    <div class="calculation-box">
+    <!-- Clinic Dispensing & Duration Helper -->
+    <div class="dispensing-box" id="dispensingBox">
+      <div class="dispensing-header">
+        <span class="dispensing-title">📦 CLINIC DISPENSING HELPER</span>
+        <div class="duration-chips" id="durationChips">
+          <button type="button" class="dur-chip" data-days="3">3 Days</button>
+          <button type="button" class="dur-chip active" data-days="5">5 Days</button>
+          <button type="button" class="dur-chip" data-days="7">7 Days</button>
+          <button type="button" class="dur-chip" data-days="10">10 Days</button>
+        </div>
+      </div>
+      <div class="dispense-result" id="dispenseResult">
+        Duration: 5 Days • Calculating...
+      </div>
+    </div>
+
+    <div class="calculation-box" style="margin-top: 12px;">
       <strong>Calculation Breakdown</strong>
       <div id="calculationText"></div>
     </div>
@@ -1088,6 +1198,38 @@ const DATA = {
     ]
   },
 
+  suppPcm: {
+    name: "Paracetamol Suppository (Supp PCM)",
+    shortName: "Supp PCM",
+    category: "Analgesics & Antipyretics",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "125mg / 250mg Suppository", fixedMl: 1 }
+    ],
+    regimens: [
+      { label: "8–12kg: 125mg Suppository Q6H PRN", minWeight: 8, maxWeight: 12.99, fixedMg: 125, frequency: "Q6H PRN", frequencySub: "Insert 1 suppository rectally PRN for fever", notes: ["For high fever with active vomiting or inability to tolerate oral syrup.", "Max 4 doses in 24h. Lubricate tip before insertion."] },
+      { label: "13–20kg: 250mg Suppository Q6H PRN", minWeight: 13, maxWeight: 20.99, fixedMg: 250, frequency: "Q6H PRN", frequencySub: "Insert 1 suppository rectally PRN for fever", notes: ["Max 4 doses in 24h."] },
+      { label: ">20kg: 2 × 250mg (500mg) Supp Q6H PRN", minWeight: 21, fixedMg: 500, frequency: "Q6H PRN", frequencySub: "Insert 2 × 250mg (or 1 × 500mg) rectally PRN", notes: ["Max 4 doses in 24h."] }
+    ],
+    notes: ["Rectal administration for pediatric fever when oral route is compromised."]
+  },
+
+  suppVoren: {
+    name: "Voltaren / Voren Suppository (Diclofenac)",
+    shortName: "Supp Voren",
+    category: "Analgesics & Antipyretics",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "12.5mg / 25mg Suppository", fixedMl: 1 }
+    ],
+    regimens: [
+      { label: "10–18kg: 12.5mg Suppository BD PRN", minWeight: 10, maxWeight: 18.99, fixedMg: 12.5, frequency: "BD PRN (Min 12h apart)", frequencySub: "Insert 1 × 12.5mg suppository rectally", notes: ["For severe high fever unresponsive to Paracetamol.", "STRICTLY for children ≥1 year and ≥10 kg.", "Max 2 doses in 24 hours (minimum 12-hour interval).", "Contraindicated in severe dehydration or suspected Dengue fever."] },
+      { label: "19–30kg: 25mg Suppository BD PRN", minWeight: 19, maxWeight: 30.99, fixedMg: 25, frequency: "BD PRN (Min 12h apart)", frequencySub: "Insert 1 × 25mg (or 2 × 12.5mg) rectally", notes: ["Max 2 doses in 24 hours.", "Do not use if dehydrated or suspected Dengue."] },
+      { label: ">30kg: 25–50mg Suppository BD PRN", minWeight: 31, fixedMg: 50, frequency: "BD PRN (Min 12h apart)", frequencySub: "Insert 1 × 50mg (or 2 × 25mg) rectally" }
+    ],
+    notes: ["NSAID rectal suppository. Second-line antipyretic/analgesic. Never give in Dengue or severe dehydration."]
+  },
+
   /* ================= STEROIDS & RESPIRATORY ================= */
   prednisolone: {
     name: "Prednisolone (Syrup Prednisolone)",
@@ -1150,6 +1292,21 @@ const DATA = {
         notes: ["For severe croup or post-extubation stridor."]
       }
     ]
+  },
+
+  montelukast: {
+    name: "Singulair / Montelukast (Oral Granules / Chewable)",
+    shortName: "Singulair",
+    category: "Steroids & Respiratory",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "4mg Sachet / 4mg & 5mg Chewable Tab", fixedMl: 1 }
+    ],
+    regimens: [
+      { label: "6m – 5 yrs (6–20kg): 4mg OD in Evening", maxWeight: 20.99, fixedMg: 4, frequency: "OD in Evening", frequencySub: "1 sachet granules or 4mg chewable tablet at bedtime", notes: ["Leukotriene receptor antagonist for post-viral wheeze and allergic rhinitis.", "Administer in the evening. Granules can be poured into child's mouth or mixed with a spoonful of soft food."] },
+      { label: "6 – 14 yrs (21–45kg): 5mg OD in Evening", minWeight: 21, fixedMg: 5, frequency: "OD in Evening", frequencySub: "1 × 5mg chewable tablet once daily at bedtime", notes: ["Chewable tablet taken in the evening."] }
+    ],
+    notes: ["Asthma prevention / viral wheeze / allergic rhinitis maintenance."]
   },
 
   /* ================= ANTIBIOTICS ================= */
@@ -1550,6 +1707,47 @@ const DATA = {
     ]
   },
 
+  smecta: {
+    name: "Smecta (Diosmectite 3g Sachet)",
+    shortName: "Smecta",
+    category: "Gastrointestinal",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "3g Sachet (Oral Powder)", fixedMl: 1 }
+    ],
+    regimens: [
+      { label: "<1 yr (<10kg): 1 sachet/day divided TDS", maxWeight: 9.99, fixedMg: 1000, frequency: "TDS (1/3 sachet each)", frequencySub: "Total 1 sachet daily in 50mL water/milk", notes: ["Natural silicate adsorbent for acute diarrhea.", "Dissolve in 50mL water or mix with puree/milk.", "Space at least 2 hours apart from other medications."] },
+      { label: "1–2 yrs (10–14kg): 1–2 sachets/day divided BD", minWeight: 10, maxWeight: 14.99, fixedMg: 1500, frequency: "BD (1/2 to 1 sachet each)", frequencySub: "Total 1 to 2 sachets daily", notes: ["Give between meals. Space 2 hours from other drugs."] },
+      { label: ">2 yrs (≥15kg): 2–3 sachets/day divided TDS", minWeight: 15, fixedMg: 3000, frequency: "TDS (1 sachet each)", frequencySub: "1 sachet three times daily", notes: ["Give between meals. Maintain adequate ORS hydration."] }
+    ],
+    notes: ["Adsorbent for acute watery diarrhea. Always co-prescribe with ORS."]
+  },
+
+  lactulose: {
+    name: "Duphalac / Lactulose (Syrup Lactulose)",
+    shortName: "Duphalac",
+    category: "Gastrointestinal",
+    dosing: "weight",
+    concentrations: [
+      { label: "3.34g/5mL (667mg/mL)", mgPerMl: 667 }
+    ],
+    regimens: [
+      {
+        label: "Pediatric Constipation: 0.5–1 mL/kg/day OD–BD",
+        mgkg: 500,
+        maxDoseMg: 20000,
+        frequency: "OD in Morning (or BD)",
+        frequencySub: "Once daily with breakfast",
+        notes: [
+          "Osmotic laxative for functional pediatric constipation.",
+          "Dosing range: 0.5–1 mL/kg/day (up to 20–30 mL/day).",
+          "Ensure generous fluid intake. May take 24–48 hours to produce therapeutic effect.",
+          "Can be mixed with fruit juice or milk."
+        ]
+      }
+    ]
+  },
+
   /* ================= COUGH & RESPIRATORY ================= */
   bisolvon: {
     name: "Bisolvon (Syrup Bromhexine)",
@@ -1574,6 +1772,22 @@ const DATA = {
         ]
       }
     ]
+  },
+
+  fluimucil: {
+    name: "Fluimucil (Acetylcysteine 100mg Sachet)",
+    shortName: "Fluimucil",
+    category: "Cough & Respiratory",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "100mg Sachet (Granules for solution)", fixedMl: 1 }
+    ],
+    regimens: [
+      { label: "<2 yrs (<12kg): 100mg (1 sachet) BD", maxWeight: 11.99, fixedMg: 100, frequency: "BD after food", frequencySub: "1 sachet (100mg) twice daily", notes: ["Dissolve in half a glass of warm water. Take after food."] },
+      { label: "2–7 yrs (12–25kg): 100mg (1 sachet) TDS (or 200mg BD)", minWeight: 12, maxWeight: 25.99, fixedMg: 100, frequency: "TDS after food", frequencySub: "1 sachet (100mg) three times daily", notes: ["Mucolytic for thick phlegm and productive cough."] },
+      { label: ">7 yrs (>25kg): 200mg (2 sachets) TDS", minWeight: 26, fixedMg: 200, frequency: "TDS after food", frequencySub: "2 sachets (200mg) three times daily" }
+    ],
+    notes: ["Mucolytic agent. Dissolve in a little water. Encourage plenty of fluids."]
   },
 
   salmodil: {
@@ -1726,6 +1940,10 @@ const frequencySub = document.getElementById("frequencySub");
 const calculationText = document.getElementById("calculationText");
 const safetyBanner = document.getElementById("safetyBanner");
 const copyRxBtn = document.getElementById("copyRxBtn");
+const copyParentBtn = document.getElementById("copyParentBtn");
+const durationChips = document.getElementById("durationChips");
+const dispenseResult = document.getElementById("dispenseResult");
+let selectedDays = 5;
 
 const noteCard = document.getElementById("noteCard");
 const noteList = document.getElementById("noteList");
@@ -1793,9 +2011,9 @@ themeToggle.addEventListener("click", () => {
 function loadFavourites() {
   try {
     const saved = localStorage.getItem(FAV_KEY);
-    return saved ? JSON.parse(saved) : ["paracetamol", "ibuprofen", "augmentin", "amoxicillin", "cetirizine", "prednisolone", "domperidone"];
+    return saved ? JSON.parse(saved) : ["paracetamol", "ibuprofen", "augmentin", "amoxicillin", "cetirizine", "prednisolone", "suppPcm", "domperidone", "bisolvon", "smecta"];
   } catch {
-    return ["paracetamol", "ibuprofen", "augmentin", "cetirizine"];
+    return ["paracetamol", "ibuprofen", "augmentin", "cetirizine", "suppPcm"];
   }
 }
 
@@ -2070,6 +2288,7 @@ function calculateDose() {
     calculationText.textContent = "Fixed volume unit dose.";
     showNotes(drug, rule);
     resultCard.classList.remove("hidden");
+    updateDispensingCalculation();
     return;
   }
 
@@ -2084,6 +2303,7 @@ function calculateDose() {
     calculationText.innerHTML = `${rule.fixedMcg} mcg ÷ ${concentration.mcgPerMl} mcg/mL = <strong>${formatVolume(mlDose)}</strong>`;
     showNotes(drug, rule);
     resultCard.classList.remove("hidden");
+    updateDispensingCalculation();
     return;
   }
 
@@ -2153,6 +2373,89 @@ function calculateDose() {
 
   showNotes(drug, rule);
   resultCard.classList.remove("hidden");
+  updateDispensingCalculation();
+}
+
+/* ==================================================
+   CLINIC DISPENSING & BOTTLE HELPER
+   ================================================== */
+let currentDispenseText = "";
+
+function updateDispensingCalculation() {
+  const drug = DATA[medicationSelect.value];
+  if (!drug || resultCard.classList.contains("hidden")) return;
+  const rule = drug.regimens[parseInt(regimenSelect.value, 10) || 0];
+
+  const volStr = volumeValue.textContent.replace(/[()]/g, "").trim();
+  const freqStr = (rule.frequency || frequencyValue.textContent || "").toUpperCase();
+
+  // Determine doses per day
+  let dosesPerDay = 3;
+  if (freqStr.includes("BD") || freqStr.includes("TWICE")) {
+    dosesPerDay = 2;
+  } else if (freqStr.includes("TDS") || freqStr.includes("THREE")) {
+    dosesPerDay = 3;
+  } else if (freqStr.includes("QID") || freqStr.includes("FOUR")) {
+    dosesPerDay = 4;
+  } else if (freqStr.includes("OD") || freqStr.includes("ONCE")) {
+    dosesPerDay = 1;
+  } else if (freqStr.includes("STAT")) {
+    dosesPerDay = 1;
+  } else if (freqStr.includes("Q4–6H") || freqStr.includes("Q6H")) {
+    dosesPerDay = 3.5;
+  } else if (freqStr.includes("Q6–8H") || freqStr.includes("Q8H")) {
+    dosesPerDay = 3;
+  }
+
+  // Liquid suspension / syrup volume dispensing
+  const mlMatch = volStr.match(/([\d.]+)\s*mL/i);
+  if (mlMatch) {
+    const mlPerDose = parseFloat(mlMatch[1]);
+    const totalMl = Math.ceil(mlPerDose * dosesPerDay * selectedDays);
+    let bottleDesc = "";
+    if (totalMl <= 60) {
+      bottleDesc = "1 × 60 mL bottle";
+    } else if (totalMl <= 100) {
+      bottleDesc = "1 × 100 mL bottle (or 2 × 60 mL)";
+    } else if (totalMl <= 120) {
+      bottleDesc = "1 × 120 mL bottle (or 2 × 60 mL)";
+    } else if (totalMl <= 180) {
+      bottleDesc = "2 × 100 mL bottles (or 3 × 60 mL)";
+    } else {
+      bottleDesc = `${Math.ceil(totalMl / 100)} × 100 mL bottles`;
+    }
+
+    currentDispenseText = `Total Volume: <strong>${totalMl} mL</strong> • Pack: <strong>${bottleDesc}</strong> (${selectedDays} Days supply)`;
+    dispenseResult.innerHTML = currentDispenseText;
+    return;
+  }
+
+  // Suppositories / Sachets / Tablets / Neb Vials
+  let unitName = "unit";
+  if (drug.name.toLowerCase().includes("suppository")) {
+    unitName = "suppository";
+  } else if (drug.name.toLowerCase().includes("sachet") || (rule.frequencySub || "").toLowerCase().includes("sachet")) {
+    unitName = "sachet";
+  } else if (drug.name.toLowerCase().includes("chewable") || drug.name.toLowerCase().includes("tablet")) {
+    unitName = "tablet";
+  } else if (drug.name.toLowerCase().includes("neb") || drug.name.toLowerCase().includes("udv")) {
+    unitName = "vial";
+  }
+
+  const totalUnits = Math.ceil(dosesPerDay * selectedDays);
+  currentDispenseText = `Total: <strong>${totalUnits} ${unitName}(s)</strong> • Pack: <strong>${totalUnits} ${unitName}(s)</strong> (${selectedDays} Days supply)`;
+  dispenseResult.innerHTML = currentDispenseText;
+}
+
+if (durationChips) {
+  durationChips.querySelectorAll(".dur-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      durationChips.querySelectorAll(".dur-chip").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedDays = parseInt(btn.dataset.days, 10) || 5;
+      updateDispensingCalculation();
+    });
+  });
 }
 
 /* ==================================================
@@ -2185,7 +2488,7 @@ function showError(msg) {
 }
 
 /* ==================================================
-   PRESCRIPTION COPY TO CLIPBOARD
+   PRESCRIPTION & PARENT CLIPBOARD ACTIONS
    ================================================== */
 copyRxBtn.addEventListener("click", () => {
   const drug = DATA[medicationSelect.value];
@@ -2196,26 +2499,61 @@ copyRxBtn.addEventListener("click", () => {
   const dose = doseValue.textContent;
   const vol = volumeValue.textContent.replace(/[()]/g, "").trim();
   const freq = frequencyValue.textContent;
+  const dispPlain = dispenseResult.textContent.replace(/\s+/g, " ").trim();
 
   let rxText = `Rx: ${drug.name} (${conc.label})\n`;
   rxText += `Dose: ${vol ? `${vol} (${dose})` : dose} ${freq}\n`;
+  rxText += `Course: ${selectedDays} Days [${dispPlain}]\n`;
   if (weight) {
     rxText += `Patient Weight: ${weight} kg [${rule.label}]`;
   }
 
   navigator.clipboard.writeText(rxText).then(() => {
-    showToast("Prescription copied to clipboard! ✓");
+    showToast("EMR Prescription copied! 📋✓");
   }).catch(() => {
-    // Fallback for older browsers
-    const temp = document.createElement("textarea");
-    temp.value = rxText;
-    document.body.appendChild(temp);
-    temp.select();
-    document.execCommand("copy");
-    document.body.removeChild(temp);
-    showToast("Prescription copied! ✓");
+    fallbackCopy(rxText, "EMR Prescription copied! 📋✓");
   });
 });
+
+copyParentBtn.addEventListener("click", () => {
+  const drug = DATA[medicationSelect.value];
+  const conc = drug.concentrations[parseInt(concentrationSelect.value, 10) || 0];
+  const rule = drug.regimens[parseInt(regimenSelect.value, 10) || 0];
+  const weight = weightInput.value;
+
+  const dose = doseValue.textContent;
+  const vol = volumeValue.textContent.replace(/[()]/g, "").trim();
+  const freq = frequencyValue.textContent;
+  const freqSub = frequencySub.textContent;
+  const dispPlain = dispenseResult.textContent.replace(/\s+/g, " ").trim();
+
+  let parentText = `👶 *Patient Weight:* ${weight ? `${weight} kg` : "—"}\n`;
+  parentText += `💊 *Medication:* ${drug.name} (${conc.label})\n`;
+  parentText += `👉 *Give:* ${vol ? `*${vol}* (${dose})` : `*${dose}*`}\n`;
+  parentText += `⏱ *Timing:* ${freq} ${freqSub ? `— ${freqSub}` : ""}\n`;
+  parentText += `📦 *Course:* ${selectedDays} Days (${dispPlain})\n`;
+  
+  if (drug.notes && drug.notes.length) {
+    parentText += `⚠️ *Note:* ${drug.notes[0]}\n`;
+  }
+  parentText += `\n_Clinic Prescription • Please follow doctor's advice_`;
+
+  navigator.clipboard.writeText(parentText).then(() => {
+    showToast("Parent instructions copied for WhatsApp! 📱✓");
+  }).catch(() => {
+    fallbackCopy(parentText, "Parent instructions copied! 📱✓");
+  });
+});
+
+function fallbackCopy(text, msg) {
+  const temp = document.createElement("textarea");
+  temp.value = text;
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand("copy");
+  document.body.removeChild(temp);
+  showToast(msg);
+}
 
 function showToast(msg) {
   toastMsg.textContent = msg;
