@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#2563eb">
   <meta name="description" content="Minimalist pediatric clinical dose calculator for point-of-care medical practice.">
-  <title>Paeds Calc • Clinical Dose Calculator</title>
+  <title>PaedsCalc • Pediatric Dose Calculator</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Paeds Calc">
+  <meta name="apple-mobile-web-app-title" content="PaedsCalc">
   <link rel="apple-touch-icon" href="icon.svg">
+  
+  <!-- html2canvas for Save as Image feature -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
@@ -20,7 +24,7 @@
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
       --ink: #0f172a;
-      --ink-secondary: #475569;
+      --ink-secondary: #334155;
       --muted: #64748b;
       --border: #cbd5e1;
       --border-focus: #2563eb;
@@ -84,6 +88,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.2s ease, color 0.2s ease;
+      padding-bottom: 74px; /* Space for sticky bottom disclaimer */
     }
 
     button, input, select { font: inherit; }
@@ -92,7 +97,7 @@
     .app {
       width: min(100%, 820px);
       margin: 0 auto;
-      padding: 24px 20px 48px;
+      padding: 20px 18px 36px;
     }
 
     /* Header */
@@ -101,25 +106,25 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 0 0 20px;
+      padding: 0 0 16px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .brand-icon {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--primary), #1d4ed8);
       color: #fff;
       display: grid;
       place-items: center;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
@@ -131,16 +136,16 @@
 
     .brand h1 {
       margin: 0;
-      font-size: 26px;
+      font-size: 24px;
       line-height: 1.1;
-      letter-spacing: -0.8px;
+      letter-spacing: -0.6px;
       font-weight: 800;
     }
 
     .brand p {
       margin: 2px 0 0;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
     }
 
@@ -151,8 +156,8 @@
     }
 
     .icon-btn {
-      min-height: 42px;
-      padding: 0 14px;
+      min-height: 40px;
+      padding: 0 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       background: var(--card-bg);
@@ -161,7 +166,7 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       cursor: pointer;
       box-shadow: var(--shadow-sm);
@@ -177,6 +182,39 @@
       background: var(--primary-soft);
       border-color: var(--primary);
       color: var(--primary-text);
+    }
+
+    /* Main Navigation Tabs (shadcn/ui style) */
+    .nav-tabs {
+      display: flex;
+      background: var(--card-border);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      gap: 4px;
+      margin-bottom: 18px;
+    }
+
+    .nav-tab-btn {
+      flex: 1;
+      padding: 9px 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .nav-tab-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
     }
 
     /* Quick Chips Bar */
@@ -232,7 +270,7 @@
     }
 
     /* Main Calculator Card */
-    .calculator-card {
+    .calculator-card, .reference-card {
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
       padding: 20px 22px 24px;
@@ -283,7 +321,7 @@
 
     .input-wrap input, .select-wrap select {
       width: 100%;
-      height: 54px;
+      height: 52px;
       border: 1.5px solid var(--border);
       border-radius: var(--radius-md);
       background: var(--card-bg);
@@ -349,7 +387,7 @@
     }
 
     .step-btn {
-      height: 54px;
+      height: 52px;
       padding: 0 12px;
       border: 1.5px solid var(--border);
       border-radius: var(--radius-md);
@@ -379,9 +417,9 @@
     }
 
     .global-star {
-      height: 54px;
-      width: 54px;
-      flex: 0 0 54px;
+      height: 52px;
+      width: 52px;
+      flex: 0 0 52px;
       border: 1.5px solid var(--border);
       border-radius: var(--radius-md);
       background: var(--card-bg);
@@ -447,6 +485,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .result-title {
@@ -478,8 +517,8 @@
       flex-wrap: wrap;
     }
 
-    .copy-rx-btn {
-      padding: 6px 12px;
+    .copy-rx-btn, .save-img-btn {
+      padding: 7px 13px;
       border: 1px solid var(--green-border);
       border-radius: 8px;
       background: #ffffff;
@@ -489,16 +528,16 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       box-shadow: var(--shadow-sm);
       transition: all 0.12s ease;
     }
 
-    [data-theme="dark"] .copy-rx-btn {
+    [data-theme="dark"] .copy-rx-btn, [data-theme="dark"] .save-img-btn {
       background: #1e293b;
     }
 
-    .copy-rx-btn:hover {
+    .copy-rx-btn:hover, .save-img-btn:hover {
       background: var(--green);
       color: #ffffff;
       border-color: var(--green);
@@ -514,6 +553,18 @@
       background: var(--primary);
       color: #ffffff;
       border-color: var(--primary);
+    }
+
+    .save-img-btn {
+      border-color: #3b82f6;
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .save-img-btn:hover {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
     }
 
     /* Clinic Dispensing Box */
@@ -589,7 +640,7 @@
       display: grid;
       grid-template-columns: 1.2fr 1px 1fr;
       align-items: center;
-      margin: 18px 0 16px;
+      margin: 16px 0 14px;
       background: var(--card-bg);
       border-radius: var(--radius-md);
       padding: 16px 12px;
@@ -614,7 +665,7 @@
     .dose-block strong {
       display: block;
       color: var(--green-text);
-      font-size: 32px;
+      font-size: 30px;
       line-height: 1.1;
       font-weight: 800;
     }
@@ -622,7 +673,7 @@
     .dose-block .vol-tag {
       display: inline-block;
       color: var(--ink);
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 700;
       margin-top: 4px;
     }
@@ -636,7 +687,7 @@
     }
 
     .dose-block strong.frequency {
-      font-size: 22px;
+      font-size: 20px;
       line-height: 1.2;
       color: var(--ink);
     }
@@ -694,6 +745,19 @@
       margin-bottom: 2px;
     }
 
+    /* Result Action Bar */
+    .result-bottom-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .result-bottom-actions button {
+      flex: 1;
+      height: 46px;
+      font-size: 14px;
+    }
+
     /* Notes Card */
     .note-card {
       margin-top: 14px;
@@ -732,6 +796,94 @@
       padding-left: 16px;
       font-size: 13px;
       line-height: 1.5;
+    }
+
+    /* Reference Tab Sub-Sections */
+    .ref-subtabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .ref-subtab-btn {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--ink-secondary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ref-subtab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .ref-card-inner {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .ref-output-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: var(--primary-soft);
+      color: var(--primary-text);
+      font-size: 20px;
+      font-weight: 800;
+      margin: 10px 0;
+    }
+
+    .use-weight-btn {
+      padding: 10px 18px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .use-weight-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .who-table-wrap {
+      margin-top: 18px;
+      overflow-x: auto;
+    }
+
+    .who-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .who-table th, .who-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .who-table th {
+      background: var(--primary-soft);
+      color: var(--primary-text);
+      font-weight: 700;
     }
 
     /* Modal / Favourites Sheet */
@@ -799,49 +951,10 @@
       cursor: pointer;
     }
 
-    /* Weight Estimator Popover */
-    .est-weight-card {
-      margin-top: 8px;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--primary-soft);
-      font-size: 13px;
-      margin-bottom: 14px;
-    }
-
-    .est-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 6px;
-    }
-
-    .est-row input, .est-row select {
-      height: 38px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--card-bg);
-      color: var(--ink);
-      padding: 0 10px;
-      font-size: 14px;
-    }
-
-    .est-apply-btn {
-      height: 38px;
-      padding: 0 14px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      cursor: pointer;
-    }
-
     /* Toast Notification */
     .toast {
       position: fixed;
-      bottom: 24px;
+      bottom: 84px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: #0f172a;
@@ -865,12 +978,137 @@
       opacity: 1;
     }
 
+    /* Permanent Sticky Disclaimer Banner (Feature 3) */
+    .sticky-disclaimer-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #facc15; /* Yellow background */
+      color: #713f12; /* Bold high-contrast text */
+      border-top: 2px solid #eab308;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      font-weight: 800;
+      text-align: center;
+      z-index: 900;
+      box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.12);
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sticky-disclaimer-banner span {
+      letter-spacing: 0.2px;
+    }
+
+    /* Offscreen / Export Prescription Card Template for HTML2Canvas */
+    #imageExportWrapper {
+      position: fixed;
+      left: -9999px;
+      top: -9999px;
+      width: 580px;
+      background: #ffffff;
+      color: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+    }
+
+    .img-clinic-header {
+      border: 1.5px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      background: #f8fafc;
+      min-height: 60px;
+      display: grid;
+      place-items: center;
+    }
+
+    .img-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .img-app-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #2563eb;
+    }
+
+    .img-date {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .img-field-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 14px;
+    }
+
+    .img-field-row strong {
+      color: #0f172a;
+    }
+
+    .img-highlight-box {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0;
+      text-align: center;
+    }
+
+    .img-dose-big {
+      font-size: 26px;
+      font-weight: 800;
+      color: #15803d;
+    }
+
+    .img-dispense-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #1e40af;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .img-mandatory-disclaimer {
+      border-top: 2px solid #ef4444;
+      padding-top: 10px;
+      color: #b91c1c;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.4;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
     footer {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 24px 0 0;
+      padding: 24px 0 12px;
       color: var(--muted);
       font-size: 12px;
     }
@@ -880,16 +1118,17 @@
     .hidden { display: none !important; }
 
     @media (max-width: 600px) {
-      .app { padding: 16px 14px 36px; }
-      .brand h1 { font-size: 22px; }
-      .brand-icon { width: 42px; height: 42px; font-size: 22px; }
+      .app { padding: 14px 12px 32px; }
+      .brand h1 { font-size: 20px; }
+      .brand-icon { width: 38px; height: 38px; font-size: 20px; }
       .weight-row { grid-template-columns: 1fr; }
       .steppers { width: 100%; justify-content: stretch; }
-      .step-btn { flex: 1; height: 44px; }
+      .step-btn { flex: 1; height: 46px; }
       .result-main { grid-template-columns: 1fr; gap: 12px; }
       .result-divider { width: 100%; height: 1px; }
-      .dose-block strong { font-size: 28px; }
-      .dose-block .vol-tag { font-size: 18px; }
+      .dose-block strong { font-size: 26px; }
+      .dose-block .vol-tag { font-size: 17px; }
+      .sticky-disclaimer-banner { font-size: 11.5px; padding: 8px 12px; }
     }
   </style>
 </head>
@@ -902,8 +1141,8 @@
     <div class="brand">
       <div class="brand-icon">✚</div>
       <div class="brand-title-wrap">
-        <h1>Paeds Calc</h1>
-        <p>Doctor's Rapid Dosing Engine</p>
+        <h1>PaedsCalc</h1>
+        <p>Pediatric Clinical Dose Calculator</p>
       </div>
     </div>
 
@@ -918,191 +1157,384 @@
     </div>
   </header>
 
-  <!-- Quick Favorites Chips Bar -->
-  <section class="chips-section" aria-label="Quick Access Favourites">
-    <div class="chips-label">
-      <span>Quick Prescriptions</span>
-      <span style="font-size:10px; font-weight:500;">Live 1-Tap</span>
-    </div>
-    <div class="chips-scroll" id="quickChips"></div>
-  </section>
+  <!-- Main Navigation Tabs: Calculator vs Reference -->
+  <nav class="nav-tabs" role="tablist">
+    <button type="button" class="nav-tab-btn active" id="tabCalculatorBtn" role="tab" aria-selected="true">
+      <span>💊</span>
+      <span>Calculator</span>
+    </button>
+    <button type="button" class="nav-tab-btn" id="tabReferenceBtn" role="tab" aria-selected="false">
+      <span>📖</span>
+      <span>Reference</span>
+    </button>
+  </nav>
 
-  <!-- Favorites Modal/Drawer -->
-  <section class="favourites-card hidden" id="favouritesCard">
-    <div class="favourites-header">
-      <div>
-        <h2>Favorite Medications</h2>
-        <p>Tap to select or star medications to pin them.</p>
+  <!-- ================= TAB 1: CALCULATOR VIEW ================= -->
+  <div id="calculatorView">
+
+    <!-- Quick Favorites Chips Bar -->
+    <section class="chips-section" aria-label="Quick Access Favourites">
+      <div class="chips-label">
+        <span>Quick Prescriptions</span>
+        <span style="font-size:10px; font-weight:500;">Live 1-Tap</span>
       </div>
-      <button id="closeFavourites" type="button">×</button>
-    </div>
-    <div id="favouritesList"></div>
-  </section>
+      <div class="chips-scroll" id="quickChips"></div>
+    </section>
 
-  <!-- Calculator Input Card -->
-  <section class="calculator-card">
-
-    <!-- Weight Field with Stepper & Age Estimator -->
-    <div class="field" id="weightField">
-      <div class="field-header">
-        <label for="weight">Patient Weight (kg)</label>
-        <button type="button" class="field-aux-action" id="toggleAgeEst">Est. from Age</button>
+    <!-- Favorites Modal/Drawer -->
+    <section class="favourites-card hidden" id="favouritesCard">
+      <div class="favourites-header">
+        <div>
+          <h2>Favorite Medications</h2>
+          <p>Tap to select or star medications to pin them.</p>
+        </div>
+        <button id="closeFavourites" type="button">×</button>
       </div>
+      <div id="favouritesList"></div>
+    </section>
 
-      <!-- Optional Age Estimator Box -->
-      <div class="est-weight-card hidden" id="ageEstBox">
-        <span style="font-weight:700; color:var(--ink);">APLS Weight Estimation</span>
-        <div class="est-row">
-          <input type="number" id="estAgeVal" min="1" max="15" placeholder="Age" style="width:70px;">
-          <select id="estAgeUnit">
-            <option value="years">Years</option>
-            <option value="months">Months</option>
-          </select>
-          <button type="button" class="est-apply-btn" id="applyEstWeight">Apply</button>
+    <!-- Calculator Input Card -->
+    <section class="calculator-card">
+
+      <!-- Weight Field with Steppers -->
+      <div class="field" id="weightField">
+        <div class="field-header">
+          <label for="weight">Patient Weight (kg)</label>
+          <button type="button" class="field-aux-action" id="goToRefEst">Estimate from Age</button>
+        </div>
+
+        <div class="weight-row">
+          <div class="input-wrap">
+            <span class="field-icon">⚖</span>
+            <input id="weight" type="number" min="0.1" max="150" step="0.1"
+                   inputmode="decimal" placeholder="e.g. 14.5" autocomplete="off" autofocus>
+            <span class="unit">kg</span>
+          </div>
+          <div class="steppers">
+            <button type="button" class="step-btn" data-step="-1">-1</button>
+            <button type="button" class="step-btn" data-step="1">+1</button>
+            <button type="button" class="step-btn" data-step="5">+5</button>
+          </div>
         </div>
       </div>
 
-      <div class="weight-row">
-        <div class="input-wrap">
-          <span class="field-icon">⚖</span>
-          <input id="weight" type="number" min="0.1" max="150" step="0.1"
-                 inputmode="decimal" placeholder="e.g. 14.5" autocomplete="off" autofocus>
-          <span class="unit">kg</span>
+      <!-- Medication Field with Instant Filter & Star -->
+      <div class="field">
+        <div class="field-header">
+          <label for="medication">Medication</label>
         </div>
-        <div class="steppers">
-          <button type="button" class="step-btn" data-step="-1">-1</button>
-          <button type="button" class="step-btn" data-step="1">+1</button>
-          <button type="button" class="step-btn" data-step="5">+5</button>
+
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="drugSearch" placeholder="Type to filter drug name or indication..." autocomplete="off">
+        </div>
+
+        <div class="medication-row">
+          <div class="select-wrap">
+            <span class="field-icon">💊</span>
+            <select id="medication"></select>
+          </div>
+          <button id="globalFavouriteBtn" class="global-star" type="button" aria-label="Toggle favourite" title="Toggle Favourite">☆</button>
         </div>
       </div>
-    </div>
 
-    <!-- Medication Field with Instant Filter & Star -->
-    <div class="field">
-      <div class="field-header">
-        <label for="medication">Medication</label>
-      </div>
-
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" id="drugSearch" placeholder="Type to filter drug name or indication..." autocomplete="off">
-      </div>
-
-      <div class="medication-row">
+      <!-- Concentration Field -->
+      <div class="field">
+        <div class="field-header">
+          <label for="concentration">Formulation / Concentration</label>
+        </div>
         <div class="select-wrap">
-          <span class="field-icon">💊</span>
-          <select id="medication"></select>
-        </div>
-        <button id="globalFavouriteBtn" class="global-star" type="button" aria-label="Toggle favourite" title="Toggle Favourite">☆</button>
-      </div>
-    </div>
-
-    <!-- Concentration Field -->
-    <div class="field">
-      <div class="field-header">
-        <label for="concentration">Formulation / Concentration</label>
-      </div>
-      <div class="select-wrap">
-        <span class="field-icon">▱</span>
-        <select id="concentration"></select>
-      </div>
-    </div>
-
-    <!-- Regimen Field -->
-    <div class="field">
-      <div class="field-header">
-        <label for="regimen">Clinical Regimen / Indication</label>
-      </div>
-      <div class="select-wrap">
-        <span class="field-icon">▣</span>
-        <select id="regimen"></select>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- Live Calculation Result Card -->
-  <section class="result-card hidden" id="resultCard">
-    <div class="result-header">
-      <div class="result-title">
-        <span class="result-icon">✓</span>
-        <span>DOSE CALCULATION</span>
-      </div>
-      <div class="rx-btn-group">
-        <button type="button" class="copy-rx-btn" id="copyRxBtn" title="Copy standard EMR prescription text">
-          <span>📋</span>
-          <span>Copy Rx</span>
-        </button>
-        <button type="button" class="copy-rx-btn copy-parent-btn" id="copyParentBtn" title="Copy parent-friendly instructions for WhatsApp or Patient label">
-          <span>📱</span>
-          <span>For Parent</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Safety Banner (Rendered dynamically if capped or alerted) -->
-    <div id="safetyBanner" class="safety-alert hidden"></div>
-
-    <div class="result-main">
-      <div class="dose-block">
-        <span class="result-label">Dose Per Dose</span>
-        <strong id="doseValue">—</strong>
-        <span class="vol-tag" id="volumeValue">—</span>
-        <span class="syringe-hint hidden" id="syringeHint">Use 1 mL oral syringe</span>
-      </div>
-
-      <div class="result-divider"></div>
-
-      <div class="dose-block">
-        <span class="result-label">Frequency / Timing</span>
-        <strong class="frequency" id="frequencyValue">—</strong>
-        <span id="frequencySub"></span>
-      </div>
-    </div>
-
-    <!-- Clinic Dispensing & Duration Helper -->
-    <div class="dispensing-box" id="dispensingBox">
-      <div class="dispensing-header">
-        <span class="dispensing-title">📦 CLINIC DISPENSING HELPER</span>
-        <div class="duration-chips" id="durationChips">
-          <button type="button" class="dur-chip" data-days="3">3 Days</button>
-          <button type="button" class="dur-chip active" data-days="5">5 Days</button>
-          <button type="button" class="dur-chip" data-days="7">7 Days</button>
-          <button type="button" class="dur-chip" data-days="10">10 Days</button>
+          <span class="field-icon">▱</span>
+          <select id="concentration"></select>
         </div>
       </div>
-      <div class="dispense-result" id="dispenseResult">
-        Duration: 5 Days • Calculating...
+
+      <!-- Regimen Field -->
+      <div class="field">
+        <div class="field-header">
+          <label for="regimen">Clinical Regimen / Indication</label>
+        </div>
+        <div class="select-wrap">
+          <span class="field-icon">▣</span>
+          <select id="regimen"></select>
+        </div>
       </div>
-    </div>
 
-    <div class="calculation-box" style="margin-top: 12px;">
-      <strong>Calculation Breakdown</strong>
-      <div id="calculationText"></div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Important Notes / Precautions Card -->
-  <section class="note-card hidden" id="noteCard">
-    <div class="note-icon">i</div>
-    <div>
-      <strong>Clinical Note & Precautions</strong>
-      <ul id="noteList"></ul>
-    </div>
-  </section>
+    <!-- Live Calculation Result Card -->
+    <section class="result-card hidden" id="resultCard">
+      <div class="result-header">
+        <div class="result-title">
+          <span class="result-icon">✓</span>
+          <span>DOSE CALCULATION</span>
+        </div>
+        <div class="rx-btn-group">
+          <button type="button" class="copy-rx-btn" id="copyRxBtn" title="Copy standard EMR prescription text">
+            <span>📋</span>
+            <span>Copy Rx</span>
+          </button>
+          <button type="button" class="copy-rx-btn copy-parent-btn" id="copyParentBtn" title="Copy parent-friendly instructions for WhatsApp or Patient label">
+            <span>📱</span>
+            <span>For Parent</span>
+          </button>
+        </div>
+      </div>
 
-  <!-- Toast for Copy Confirmation -->
+      <!-- Safety Banner (Rendered dynamically if capped or alerted) -->
+      <div id="safetyBanner" class="safety-alert hidden"></div>
+
+      <div class="result-main">
+        <div class="dose-block">
+          <span class="result-label">Dose Per Dose</span>
+          <strong id="doseValue">—</strong>
+          <span class="vol-tag" id="volumeValue">—</span>
+          <span class="syringe-hint hidden" id="syringeHint">Use 1 mL oral syringe</span>
+        </div>
+
+        <div class="result-divider"></div>
+
+        <div class="dose-block">
+          <span class="result-label">Frequency / Timing</span>
+          <strong class="frequency" id="frequencyValue">—</strong>
+          <span id="frequencySub"></span>
+        </div>
+      </div>
+
+      <!-- Clinic Dispensing & Duration Helper -->
+      <div class="dispensing-box" id="dispensingBox">
+        <div class="dispensing-header">
+          <span class="dispensing-title">📦 CLINIC DISPENSING HELPER</span>
+          <div class="duration-chips" id="durationChips">
+            <button type="button" class="dur-chip" data-days="3">3 Days</button>
+            <button type="button" class="dur-chip active" data-days="5">5 Days</button>
+            <button type="button" class="dur-chip" data-days="7">7 Days</button>
+            <button type="button" class="dur-chip" data-days="10">10 Days</button>
+          </div>
+        </div>
+        <div class="dispense-result" id="dispenseResult">
+          Duration: 5 Days • Calculating...
+        </div>
+      </div>
+
+      <div class="calculation-box" style="margin-top: 12px;">
+        <strong>Calculation Breakdown</strong>
+        <div id="calculationText"></div>
+      </div>
+
+      <!-- Feature 1: Save as Image Action Button -->
+      <div class="result-bottom-actions">
+        <button type="button" class="save-img-btn" id="saveImageBtn" title="Export high-resolution PNG image with official medical disclaimer">
+          <span>📸</span>
+          <span>Save as Image (PNG)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Important Notes / Precautions Card -->
+    <section class="note-card hidden" id="noteCard">
+      <div class="note-icon">i</div>
+      <div>
+        <strong>Clinical Note & Precautions</strong>
+        <ul id="noteList"></ul>
+      </div>
+    </section>
+
+  </div> <!-- End #calculatorView -->
+
+
+  <!-- ================= TAB 2: REFERENCE TAB (Feature 2) ================= -->
+  <div id="referenceView" class="hidden">
+    <section class="reference-card">
+      <div class="field-header">
+        <label>Pediatric Growth & Weight Estimator (WHO Reference)</label>
+      </div>
+
+      <!-- Sub-Tabs for Reference -->
+      <div class="ref-subtabs">
+        <button type="button" class="ref-subtab-btn active" id="subtabAgeToWeightBtn">
+          Tab A: Age → Weight
+        </button>
+        <button type="button" class="ref-subtab-btn" id="subtabWeightToAgeBtn">
+          Tab B: Weight → Age Range
+        </button>
+      </div>
+
+      <!-- SUB-TAB A: AGE TO WEIGHT -->
+      <div id="ageToWeightSection">
+        <p style="margin: 0 0 12px; font-size: 13.5px; color: var(--muted);">
+          Estimate expected weight based on age (Formula: <em>Age × 2 + 8</em> for 1–5 yrs, WHO Growth Standard for &gt;5 yrs).
+        </p>
+
+        <div class="field">
+          <label for="refAgeInput">Patient Age</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input id="refAgeInput" type="number" min="0.1" max="18" step="0.5" placeholder="e.g. 3" style="width: 120px; height: 48px; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0 12px; font-size: 16px; font-weight: 700; background: var(--card-bg); color: var(--ink);">
+            <select id="refAgeUnitSelect" style="height: 48px; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0 12px; font-size: 15px; font-weight: 600; background: var(--card-bg); color: var(--ink);">
+              <option value="years">Years</option>
+              <option value="months">Months</option>
+            </select>
+            <button type="button" class="step-btn" id="calcAgeToWeightBtn" style="height: 48px; padding: 0 16px; background: var(--primary); color: #fff; border-color: var(--primary);">Calculate</button>
+          </div>
+        </div>
+
+        <div class="ref-card-inner hidden" id="ageToWeightResultCard">
+          <span style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;">Estimated Weight:</span>
+          <div>
+            <span class="ref-output-badge" id="estWeightOutput">— kg</span>
+          </div>
+          <p style="margin: 4px 0 12px; font-size: 13px; color: var(--ink-secondary);" id="estFormulaExplanation"></p>
+          <button type="button" class="use-weight-btn" id="useThisWeightBtn">
+            <span>✓</span>
+            <span>Use This Weight in Calculator</span>
+          </button>
+        </div>
+
+        <div class="who-table-wrap">
+          <strong style="font-size: 12px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 6px;">WHO Average Weight Reference Chart</strong>
+          <table class="who-table">
+            <thead>
+              <tr>
+                <th>Age</th>
+                <th>Boys (Median)</th>
+                <th>Girls (Median)</th>
+                <th>Formula / Guide</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1 Month</td><td>4.5 kg</td><td>4.2 kg</td><td>(Months × 0.5) + 4</td></tr>
+              <tr><td>6 Months</td><td>7.9 kg</td><td>7.3 kg</td><td>(Months × 0.5) + 4</td></tr>
+              <tr><td>1 Year</td><td>9.6 kg</td><td>8.9 kg</td><td>Age × 2 + 8</td></tr>
+              <tr><td>2 Years</td><td>12.2 kg</td><td>11.5 kg</td><td>Age × 2 + 8</td></tr>
+              <tr><td>3 Years</td><td>14.3 kg</td><td>13.9 kg</td><td>Age × 2 + 8</td></tr>
+              <tr><td>4 Years</td><td>16.3 kg</td><td>16.1 kg</td><td>Age × 2 + 8</td></tr>
+              <tr><td>5 Years</td><td>18.3 kg</td><td>18.2 kg</td><td>Age × 2 + 8</td></tr>
+              <tr><td>6 Years</td><td>20.5 kg</td><td>20.2 kg</td><td>WHO Growth Standard</td></tr>
+              <tr><td>7 Years</td><td>23.1 kg</td><td>22.8 kg</td><td>WHO Growth Standard</td></tr>
+              <tr><td>8 Years</td><td>25.6 kg</td><td>25.6 kg</td><td>WHO Growth Standard</td></tr>
+              <tr><td>10 Years</td><td>31.9 kg</td><td>32.5 kg</td><td>WHO Growth Standard</td></tr>
+              <tr><td>12 Years</td><td>39.8 kg</td><td>41.5 kg</td><td>WHO Growth Standard</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUB-TAB B: WEIGHT TO AGE -->
+      <div id="weightToAgeSection" class="hidden">
+        <p style="margin: 0 0 12px; font-size: 13.5px; color: var(--muted);">
+          Estimate expected pediatric age range from weight using WHO percentile tables.
+        </p>
+
+        <div class="field">
+          <label for="refWeightInput">Patient Weight (kg)</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input id="refWeightInput" type="number" min="1" max="100" step="0.5" placeholder="e.g. 14.5" style="width: 140px; height: 48px; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0 12px; font-size: 16px; font-weight: 700; background: var(--card-bg); color: var(--ink);">
+            <button type="button" class="step-btn" id="calcWeightToAgeBtn" style="height: 48px; padding: 0 16px; background: var(--primary); color: #fff; border-color: var(--primary);">Estimate Age</button>
+          </div>
+        </div>
+
+        <div class="ref-card-inner hidden" id="weightToAgeResultCard">
+          <span style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;">Estimated Age Range:</span>
+          <div>
+            <span class="ref-output-badge" id="estAgeOutput">—</span>
+          </div>
+          <p style="margin: 4px 0 0; font-size: 13px; color: var(--ink-secondary);" id="estAgeDetails"></p>
+        </div>
+
+        <div class="who-table-wrap">
+          <strong style="font-size: 12px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 6px;">Weight to Approximate Age Mapping</strong>
+          <table class="who-table">
+            <thead>
+              <tr>
+                <th>Weight Band</th>
+                <th>Estimated Age</th>
+                <th>Standard Development Stage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>3.0 – 5.0 kg</td><td>0 – 2 Months</td><td>Early Neonatal / Infant</td></tr>
+              <tr><td>5.1 – 7.5 kg</td><td>2 – 6 Months</td><td>Young Infant</td></tr>
+              <tr><td>7.6 – 9.5 kg</td><td>6 – 12 Months</td><td>Older Infant</td></tr>
+              <tr><td>9.6 – 12.5 kg</td><td>1 – 2 Years</td><td>Toddler</td></tr>
+              <tr><td>12.6 – 15.0 kg</td><td>2 – 3.5 Years</td><td>Early Preschool</td></tr>
+              <tr><td>15.1 – 18.5 kg</td><td>3.5 – 5 Years</td><td>Preschool</td></tr>
+              <tr><td>18.6 – 23.0 kg</td><td>5 – 7 Years</td><td>Early Primary</td></tr>
+              <tr><td>23.1 – 28.0 kg</td><td>7 – 9 Years</td><td>Primary School</td></tr>
+              <tr><td>28.1 – 35.0 kg</td><td>9 – 11 Years</td><td>Late Primary</td></tr>
+              <tr><td>35.1 – 45.0 kg</td><td>11 – 13 Years</td><td>Early Adolescent</td></tr>
+              <tr><td>&gt; 45.0 kg</td><td>&gt; 13 Years</td><td>Adolescent / Adult Dosing</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </div> <!-- End #referenceView -->
+
+  <!-- Toast for Confirmations -->
   <div class="toast" id="toast">
     <span>✓</span>
     <span id="toastMsg">Prescription copied to clipboard</span>
   </div>
 
   <footer>
-    <strong>Paeds Calc • Minimalist Clinical Engine</strong>
-    <span>Point-of-care pediatric dosing reference</span>
+    <strong>PaedsCalc • Professional Pediatric Dosing Suite</strong>
+    <span>Point-of-care pediatric reference tool</span>
   </footer>
 
 </main>
+
+<!-- ================= FEATURE 3: PERMANENT STICKY DISCLAIMER BANNER ================= -->
+<aside class="sticky-disclaimer-banner" role="alert" aria-live="polite">
+  <span><strong>WARNING:</strong> Calculation aid only. Not medical advice. Always verify all doses before administering to patient.</span>
+</aside>
+
+<!-- ================= FEATURE 1: IMAGE EXPORT WRAPPER (FOR HTML2CANVAS) ================= -->
+<div id="imageExportWrapper">
+  <!-- Leave empty space at top for user to add clinic name / stamp -->
+  <div class="img-clinic-header">
+    <span>[ CLINIC / DOCTOR'S NAME &amp; STAMP AREA ]</span>
+  </div>
+
+  <div class="img-title-bar">
+    <div class="img-app-name">✚ PaedsCalc</div>
+    <div class="img-date" id="imgExportDate">Date: —</div>
+  </div>
+
+  <div class="img-field-row">
+    <span>Patient Weight:</span>
+    <strong id="imgPatientWeight">— kg</strong>
+  </div>
+
+  <div class="img-field-row">
+    <span>Medication:</span>
+    <strong id="imgDrugName">—</strong>
+  </div>
+
+  <div class="img-field-row">
+    <span>Formulation:</span>
+    <strong id="imgConcentration">—</strong>
+  </div>
+
+  <div class="img-highlight-box">
+    <div style="font-size: 12px; font-weight: 750; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">CALCULATED DOSE PER DOSE</div>
+    <div class="img-dose-big" id="imgDoseDisplay">—</div>
+    <div style="font-size: 15px; font-weight: 700; color: #1e293b; margin-top: 4px;" id="imgFrequencyDisplay">—</div>
+  </div>
+
+  <div class="img-dispense-box">
+    <strong>Course &amp; Dispensing:</strong>
+    <div id="imgDispenseDetails">—</div>
+  </div>
+
+  <!-- Mandatory Bold Red Warning -->
+  <div class="img-mandatory-disclaimer">
+    WARNING: For Medical Professionals Only.<br>
+    Always verify dose with BNFc/MIMS.<br>
+    This is not a substitute for clinical judgment.<br>
+    The developer is not liable for any errors.
+  </div>
+</div>
 
 <script>
 /*
@@ -1620,68 +2052,6 @@ const DATA = {
     ]
   },
 
-  buscopan: {
-    name: "Buscopan (Syrup Hyoscine Butylbromide)",
-    shortName: "Buscopan",
-    category: "Gastrointestinal",
-    dosing: "weight",
-    concentrations: [
-      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
-    ],
-    regimens: [
-      {
-        label: "0.5 mg/kg/dose TDS (Antispasmodic)",
-        mgkg: 0.5,
-        maxDoseMg: 10,
-        maxDailyMg: 30,
-        frequency: "TDS",
-        frequencySub: "Three times daily for abdominal spasm",
-        notes: ["Cap at 10mg (10mL) per dose."]
-      }
-    ]
-  },
-
-  colimix: {
-    name: "Colimix (Dicyclomine + Simethicone)",
-    shortName: "Colimix",
-    category: "Gastrointestinal",
-    dosing: "weight",
-    concentrations: [
-      { label: "Dicyclomine 5mg + Simethicone 50mg / 5mL", mgPerMl: 1.0 }
-    ],
-    regimens: [
-      {
-        label: "0.5 mg/kg/dose QID (Infant Colic)",
-        mgkg: 0.5,
-        maxDoseMg: 10,
-        frequency: "QID PRN",
-        frequencySub: "Four times daily",
-        notes: ["Contraindicated in infants under 6 months (risk of apnea / respiratory collapse)."]
-      }
-    ]
-  },
-
-  maxalon: {
-    name: "Maxalon (Syrup Metoclopramide)",
-    shortName: "Maxalon",
-    category: "Gastrointestinal",
-    dosing: "weightBand",
-    concentrations: [
-      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
-    ],
-    regimens: [
-      { label: "10–14kg: 1mg TDS", minWeight: 10, maxWeight: 14.99, fixedMg: 1, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
-      { label: "15–19kg: 2mg TDS", minWeight: 15, maxWeight: 19.99, fixedMg: 2, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
-      { label: "20–29kg: 2.5mg TDS", minWeight: 20, maxWeight: 29.99, fixedMg: 2.5, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
-      { label: "30–60kg: 5mg TDS", minWeight: 30, maxWeight: 60, fixedMg: 5, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
-      { label: ">60kg: 10mg TDS", minWeight: 60.01, fixedMg: 10, frequency: "Up to TDS", frequencySub: "Min 6h interval" }
-    ],
-    notes: [
-      "Second-line only. Contraindicated <1 year (high extrapyramidal / dystonia risk).",
-      "Minimum 6-hour interval between doses."
-    ]
-  },
-
   kaolin: {
     name: "Kaolin (Mist Kaolin Pedia / Kaolin-Pectin)",
     shortName: "Kaolin",
@@ -1745,6 +2115,68 @@ const DATA = {
           "Can be mixed with fruit juice or milk."
         ]
       }
+    ]
+  },
+
+  buscopan: {
+    name: "Buscopan (Syrup Hyoscine Butylbromide)",
+    shortName: "Buscopan",
+    category: "Gastrointestinal",
+    dosing: "weight",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.5 mg/kg/dose TDS (Antispasmodic)",
+        mgkg: 0.5,
+        maxDoseMg: 10,
+        maxDailyMg: 30,
+        frequency: "TDS",
+        frequencySub: "Three times daily for abdominal spasm",
+        notes: ["Cap at 10mg (10mL) per dose."]
+      }
+    ]
+  },
+
+  colimix: {
+    name: "Colimix (Dicyclomine + Simethicone)",
+    shortName: "Colimix",
+    category: "Gastrointestinal",
+    dosing: "weight",
+    concentrations: [
+      { label: "Dicyclomine 5mg + Simethicone 50mg / 5mL", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      {
+        label: "0.5 mg/kg/dose QID (Infant Colic)",
+        mgkg: 0.5,
+        maxDoseMg: 10,
+        frequency: "QID PRN",
+        frequencySub: "Four times daily",
+        notes: ["Contraindicated in infants under 6 months (risk of apnea / respiratory collapse)."]
+      }
+    ]
+  },
+
+  maxalon: {
+    name: "Maxalon (Syrup Metoclopramide)",
+    shortName: "Maxalon",
+    category: "Gastrointestinal",
+    dosing: "weightBand",
+    concentrations: [
+      { label: "5mg/5mL (1mg/mL)", mgPerMl: 1.0 }
+    ],
+    regimens: [
+      { label: "10–14kg: 1mg TDS", minWeight: 10, maxWeight: 14.99, fixedMg: 1, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: "15–19kg: 2mg TDS", minWeight: 15, maxWeight: 19.99, fixedMg: 2, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: "20–29kg: 2.5mg TDS", minWeight: 20, maxWeight: 29.99, fixedMg: 2.5, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: "30–60kg: 5mg TDS", minWeight: 30, maxWeight: 60, fixedMg: 5, frequency: "Up to TDS", frequencySub: "Min 6h interval" },
+      { label: ">60kg: 10mg TDS", minWeight: 60.01, fixedMg: 10, frequency: "Up to TDS", frequencySub: "Min 6h interval" }
+    ],
+    notes: [
+      "Second-line only. Contraindicated <1 year (high extrapyramidal / dystonia risk).",
+      "Minimum 6-hour interval between doses."
     ]
   },
 
@@ -1917,12 +2349,22 @@ const DATA = {
 const FAV_KEY = "paedsCalcFavourites_v5";
 const THEME_KEY = "paedsCalcTheme";
 const LAST_WEIGHT_KEY = "paedsCalcLastWeight";
-const LAST_MED_KEY = "paedsCalcLastMed";
 
 let favourites = loadFavourites();
 let currentSearchTerm = "";
+let selectedDays = 5;
 
 /* DOM Elements */
+const tabCalculatorBtn = document.getElementById("tabCalculatorBtn");
+const tabReferenceBtn = document.getElementById("tabReferenceBtn");
+const calculatorView = document.getElementById("calculatorView");
+const referenceView = document.getElementById("referenceView");
+
+const subtabAgeToWeightBtn = document.getElementById("subtabAgeToWeightBtn");
+const subtabWeightToAgeBtn = document.getElementById("subtabWeightToAgeBtn");
+const ageToWeightSection = document.getElementById("ageToWeightSection");
+const weightToAgeSection = document.getElementById("weightToAgeSection");
+
 const weightInput = document.getElementById("weight");
 const medicationSelect = document.getElementById("medication");
 const globalFavouriteBtn = document.getElementById("globalFavouriteBtn");
@@ -1941,9 +2383,9 @@ const calculationText = document.getElementById("calculationText");
 const safetyBanner = document.getElementById("safetyBanner");
 const copyRxBtn = document.getElementById("copyRxBtn");
 const copyParentBtn = document.getElementById("copyParentBtn");
+const saveImageBtn = document.getElementById("saveImageBtn");
 const durationChips = document.getElementById("durationChips");
 const dispenseResult = document.getElementById("dispenseResult");
-let selectedDays = 5;
 
 const noteCard = document.getElementById("noteCard");
 const noteList = document.getElementById("noteList");
@@ -1955,14 +2397,37 @@ const closeFavourites = document.getElementById("closeFavourites");
 
 const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
+const goToRefEst = document.getElementById("goToRefEst");
 
-const toggleAgeEst = document.getElementById("toggleAgeEst");
-const ageEstBox = document.getElementById("ageEstBox");
-const estAgeVal = document.getElementById("estAgeVal");
-const estAgeUnit = document.getElementById("estAgeUnit");
-const applyEstWeight = document.getElementById("applyEstWeight");
+/* Reference Elements */
+const refAgeInput = document.getElementById("refAgeInput");
+const refAgeUnitSelect = document.getElementById("refAgeUnitSelect");
+const calcAgeToWeightBtn = document.getElementById("calcAgeToWeightBtn");
+const ageToWeightResultCard = document.getElementById("ageToWeightResultCard");
+const estWeightOutput = document.getElementById("estWeightOutput");
+const estFormulaExplanation = document.getElementById("estFormulaExplanation");
+const useThisWeightBtn = document.getElementById("useThisWeightBtn");
+
+const refWeightInput = document.getElementById("refWeightInput");
+const calcWeightToAgeBtn = document.getElementById("calcWeightToAgeBtn");
+const weightToAgeResultCard = document.getElementById("weightToAgeResultCard");
+const estAgeOutput = document.getElementById("estAgeOutput");
+const estAgeDetails = document.getElementById("estAgeDetails");
+
+/* Image Export Elements */
+const imageExportWrapper = document.getElementById("imageExportWrapper");
+const imgExportDate = document.getElementById("imgExportDate");
+const imgPatientWeight = document.getElementById("imgPatientWeight");
+const imgDrugName = document.getElementById("imgDrugName");
+const imgConcentration = document.getElementById("imgConcentration");
+const imgDoseDisplay = document.getElementById("imgDoseDisplay");
+const imgFrequencyDisplay = document.getElementById("imgFrequencyDisplay");
+const imgDispenseDetails = document.getElementById("imgDispenseDetails");
+
 const toast = document.getElementById("toast");
 const toastMsg = document.getElementById("toastMsg");
+
+let calculatedEstWeightVal = 0;
 
 /* ==================================================
    INITIALIZATION
@@ -1977,6 +2442,161 @@ medicationSelect.value = "paracetamol";
 updateMedicationFields();
 refreshShortcutState();
 calculateDose();
+
+/* ==================================================
+   TAB NAVIGATION (Calculator vs Reference)
+   ================================================== */
+tabCalculatorBtn.addEventListener("click", () => {
+  tabCalculatorBtn.classList.add("active");
+  tabCalculatorBtn.setAttribute("aria-selected", "true");
+  tabReferenceBtn.classList.remove("active");
+  tabReferenceBtn.setAttribute("aria-selected", "false");
+
+  calculatorView.classList.remove("hidden");
+  referenceView.classList.add("hidden");
+});
+
+tabReferenceBtn.addEventListener("click", () => {
+  tabReferenceBtn.classList.add("active");
+  tabReferenceBtn.setAttribute("aria-selected", "true");
+  tabCalculatorBtn.classList.remove("active");
+  tabCalculatorBtn.setAttribute("aria-selected", "false");
+
+  referenceView.classList.remove("hidden");
+  calculatorView.classList.add("hidden");
+});
+
+goToRefEst.addEventListener("click", () => {
+  tabReferenceBtn.click();
+  subtabAgeToWeightBtn.click();
+  refAgeInput.focus();
+});
+
+// Sub-tabs in Reference
+subtabAgeToWeightBtn.addEventListener("click", () => {
+  subtabAgeToWeightBtn.classList.add("active");
+  subtabWeightToAgeBtn.classList.remove("active");
+  ageToWeightSection.classList.remove("hidden");
+  weightToAgeSection.classList.add("hidden");
+});
+
+subtabWeightToAgeBtn.addEventListener("click", () => {
+  subtabWeightToAgeBtn.classList.add("active");
+  subtabAgeToWeightBtn.classList.remove("active");
+  weightToAgeSection.classList.remove("hidden");
+  ageToWeightSection.classList.add("hidden");
+});
+
+/* ==================================================
+   REFERENCE FEATURE 2: AGE TO WEIGHT ESTIMATOR
+   ================================================== */
+function calculateAgeToWeight() {
+  const val = parseFloat(refAgeInput.value);
+  if (!val || val <= 0) {
+    showToast("Please enter a valid age.");
+    return;
+  }
+  const unit = refAgeUnitSelect.value;
+  let estWeight = 0;
+  let formulaText = "";
+
+  if (unit === "months") {
+    estWeight = (val * 0.5) + 4;
+    formulaText = `Calculation: (${val} months × 0.5) + 4 = <strong>${round(estWeight, 1)} kg</strong> (Infant formula)`;
+  } else {
+    // Years
+    if (val <= 5) {
+      estWeight = (val * 2) + 8;
+      formulaText = `Formula (1–5 yrs): ${val} yrs × 2 + 8 = <strong>${round(estWeight, 1)} kg</strong>`;
+    } else {
+      // >5 years WHO Standard Median Lookup
+      const whoMedians = {
+        6: 20.5, 7: 23.0, 8: 25.6, 9: 28.6, 10: 32.0, 
+        11: 36.0, 12: 40.5, 13: 45.5, 14: 51.0, 15: 56.0, 16: 60.0, 17: 64.0, 18: 68.0
+      };
+      const roundedAge = Math.min(18, Math.max(6, Math.round(val)));
+      estWeight = whoMedians[roundedAge] || (val * 3 + 7);
+      formulaText = `WHO Average Standard for ${val} years: <strong>${round(estWeight, 1)} kg</strong>`;
+    }
+  }
+
+  calculatedEstWeightVal = round(estWeight, 1);
+  estWeightOutput.textContent = `${calculatedEstWeightVal} kg`;
+  estFormulaExplanation.innerHTML = formulaText;
+  ageToWeightResultCard.classList.remove("hidden");
+}
+
+calcAgeToWeightBtn.addEventListener("click", calculateAgeToWeight);
+refAgeInput.addEventListener("keydown", (e) => { if (e.key === "Enter") calculateAgeToWeight(); });
+
+useThisWeightBtn.addEventListener("click", () => {
+  if (calculatedEstWeightVal > 0) {
+    weightInput.value = calculatedEstWeightVal;
+    localStorage.setItem(LAST_WEIGHT_KEY, calculatedEstWeightVal);
+    tabCalculatorBtn.click();
+    calculateDose();
+    showToast(`Applied ${calculatedEstWeightVal} kg to Calculator! ✓`);
+  }
+});
+
+/* ==================================================
+   REFERENCE FEATURE 2: WEIGHT TO AGE ESTIMATOR
+   ================================================== */
+function calculateWeightToAge() {
+  const wt = parseFloat(refWeightInput.value);
+  if (!wt || wt <= 0) {
+    showToast("Please enter a valid weight in kg.");
+    return;
+  }
+
+  let ageRange = "";
+  let details = "";
+
+  if (wt < 4.0) {
+    ageRange = "0 – 1 Month (Neonatal)";
+    details = "WHO Range: Birth to 1 month. Typical weight for full-term neonates.";
+  } else if (wt <= 5.5) {
+    ageRange = "1 – 3 Months";
+    details = "WHO Median: Boys 5.6kg, Girls 5.1kg at 2-3 months.";
+  } else if (wt <= 7.5) {
+    ageRange = "3 – 6 Months";
+    details = "WHO Median: Boys 7.9kg, Girls 7.3kg at 6 months.";
+  } else if (wt <= 9.5) {
+    ageRange = "6 – 12 Months (~1 Year)";
+    details = "WHO Median at 12 months: Boys 9.6kg, Girls 8.9kg.";
+  } else if (wt <= 12.5) {
+    ageRange = "1 – 2 Years (Toddler)";
+    details = "Formula check: Age 2y ≈ 12 kg (Range 10.5 – 13.5 kg).";
+  } else if (wt <= 15.0) {
+    ageRange = "2.5 – 3.5 Years";
+    details = "Formula check: Age 3y ≈ 14 kg (Range 12.5 – 16.0 kg).";
+  } else if (wt <= 18.5) {
+    ageRange = "3.5 – 5 Years (Preschool)";
+    details = "Formula check: Age 4y ≈ 16kg, Age 5y ≈ 18kg.";
+  } else if (wt <= 23.0) {
+    ageRange = "5 – 7 Years";
+    details = "WHO 50th Percentile: 6y = 20.5 kg, 7y = 23 kg.";
+  } else if (wt <= 28.5) {
+    ageRange = "7 – 9 Years";
+    details = "WHO 50th Percentile: 8y = 25.6 kg, 9y = 28.6 kg.";
+  } else if (wt <= 35.0) {
+    ageRange = "9 – 11 Years";
+    details = "WHO 50th Percentile: 10y = 32 kg, 11y = 36 kg.";
+  } else if (wt <= 45.0) {
+    ageRange = "11 – 13 Years";
+    details = "WHO 50th Percentile: 12y = 40 kg, 13y = 45 kg.";
+  } else {
+    ageRange = "> 13 Years (Adolescent / Adult)";
+    details = "Standard adult ceiling and maximum single dose caps apply.";
+  }
+
+  estAgeOutput.textContent = ageRange;
+  estAgeDetails.textContent = details;
+  weightToAgeResultCard.classList.remove("hidden");
+}
+
+calcWeightToAgeBtn.addEventListener("click", calculateWeightToAge);
+refWeightInput.addEventListener("keydown", (e) => { if (e.key === "Enter") calculateWeightToAge(); });
 
 /* ==================================================
    THEME LOGIC
@@ -2040,7 +2660,6 @@ function refreshShortcutState() {
     globalFavouriteBtn.style.color = isFav ? "#f59e0b" : "var(--muted)";
     globalFavouriteBtn.textContent = isFav ? "★" : "☆";
   }
-  // update active chip
   document.querySelectorAll(".chip-btn").forEach(chip => {
     if (chip.dataset.key === medicationSelect.value) {
       chip.classList.add("active");
@@ -2133,7 +2752,6 @@ drugSearch.addEventListener("input", e => {
 function selectMedication(key) {
   if (!DATA[key]) return;
   medicationSelect.value = key;
-  localStorage.setItem(LAST_MED_KEY, key);
   updateMedicationFields();
   refreshShortcutState();
   calculateDose();
@@ -2167,35 +2785,9 @@ function updateMedicationFields() {
 }
 
 /* ==================================================
-   WEIGHT ESTIMATOR & STEPPERS
+   WEIGHT STEPPERS
    ================================================== */
-toggleAgeEst.addEventListener("click", () => {
-  ageEstBox.classList.toggle("hidden");
-});
-
-applyEstWeight.addEventListener("click", () => {
-  const age = parseFloat(estAgeVal.value);
-  if (!age || age <= 0) return;
-  const unit = estAgeUnit.value;
-  let estimated = 0;
-
-  if (unit === "months") {
-    estimated = (age * 0.5) + 4; // < 1 yr formula
-  } else {
-    if (age <= 5) {
-      estimated = (age * 2) + 8; // 1-5 yrs
-    } else {
-      estimated = (age * 3) + 7; // 6-12 yrs
-    }
-  }
-
-  weightInput.value = round(estimated, 1);
-  localStorage.setItem(LAST_WEIGHT_KEY, weightInput.value);
-  ageEstBox.classList.add("hidden");
-  calculateDose();
-});
-
-document.querySelectorAll(".step-btn").forEach(btn => {
+document.querySelectorAll(".step-btn[data-step]").forEach(btn => {
   btn.addEventListener("click", () => {
     const step = parseFloat(btn.dataset.step);
     let cur = parseFloat(weightInput.value) || 10;
@@ -2389,7 +2981,6 @@ function updateDispensingCalculation() {
   const volStr = volumeValue.textContent.replace(/[()]/g, "").trim();
   const freqStr = (rule.frequency || frequencyValue.textContent || "").toUpperCase();
 
-  // Determine doses per day
   let dosesPerDay = 3;
   if (freqStr.includes("BD") || freqStr.includes("TWICE")) {
     dosesPerDay = 2;
@@ -2407,7 +2998,7 @@ function updateDispensingCalculation() {
     dosesPerDay = 3;
   }
 
-  // Liquid suspension / syrup volume dispensing
+  // Liquid volume dispensing
   const mlMatch = volStr.match(/([\d.]+)\s*mL/i);
   if (mlMatch) {
     const mlPerDose = parseFloat(mlMatch[1]);
@@ -2430,7 +3021,7 @@ function updateDispensingCalculation() {
     return;
   }
 
-  // Suppositories / Sachets / Tablets / Neb Vials
+  // Unit items (Suppositories, sachets, tablets, vials)
   let unitName = "unit";
   if (drug.name.toLowerCase().includes("suppository")) {
     unitName = "suppository";
@@ -2486,6 +3077,72 @@ function showError(msg) {
   frequencySub.textContent = "";
   calculationText.textContent = msg;
 }
+
+/* ==================================================
+   FEATURE 1: SAVE AS IMAGE (HTML2CANVAS)
+   ================================================== */
+saveImageBtn.addEventListener("click", async () => {
+  const drug = DATA[medicationSelect.value];
+  const conc = drug.concentrations[parseInt(concentrationSelect.value, 10) || 0];
+  const weight = weightInput.value || "—";
+  const dose = doseValue.textContent;
+  const vol = volumeValue.textContent.replace(/[()]/g, "").trim();
+  const freq = frequencyValue.textContent;
+  const freqSub = frequencySub.textContent;
+  const dispPlain = dispenseResult.textContent.replace(/\s+/g, " ").trim();
+
+  // Populate Image Export Card
+  const now = new Date();
+  imgExportDate.textContent = `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+  imgPatientWeight.textContent = `${weight} kg`;
+  imgDrugName.textContent = drug.name;
+  imgConcentration.textContent = conc.label;
+  imgDoseDisplay.textContent = vol ? `${vol} (${dose})` : dose;
+  imgFrequencyDisplay.textContent = `${freq} ${freqSub ? `— ${freqSub}` : ""}`;
+  imgDispenseDetails.textContent = `${selectedDays} Days Course • ${dispPlain}`;
+
+  showToast("Generating image... 📸");
+
+  if (typeof html2canvas === "undefined") {
+    showToast("Loading image renderer... please retry in a second.");
+    return;
+  }
+
+  try {
+    const canvas = await html2canvas(imageExportWrapper, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
+
+    // Auto Download PNG
+    const link = document.createElement("a");
+    const safeName = (drug.shortName || "Dose").replace(/\s+/g, "_");
+    link.download = `PaedsCalc_${safeName}_${weight}kg.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    // Copy to clipboard if supported
+    if (navigator.clipboard && window.ClipboardItem) {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          navigator.clipboard.write([
+            new ClipboardItem({ "image/png": blob })
+          ]).then(() => {
+            showToast("Downloaded & Image copied to clipboard! 📸✓");
+          }).catch(() => {
+            showToast("Prescription PNG image downloaded! 📸✓");
+          });
+        }
+      });
+    } else {
+      showToast("Prescription PNG image downloaded! 📸✓");
+    }
+  } catch (err) {
+    console.error("Image generation error:", err);
+    showToast("Error creating image. Please try again.");
+  }
+});
 
 /* ==================================================
    PRESCRIPTION & PARENT CLIPBOARD ACTIONS
@@ -2560,7 +3217,7 @@ function showToast(msg) {
   toast.classList.add("show");
   setTimeout(() => {
     toast.classList.remove("show");
-  }, 2200);
+  }, 2400);
 }
 
 /* ==================================================
@@ -2615,7 +3272,6 @@ weightInput.addEventListener("input", () => {
 });
 
 medicationSelect.addEventListener("change", () => {
-  localStorage.setItem(LAST_MED_KEY, medicationSelect.value);
   updateMedicationFields();
   refreshShortcutState();
   calculateDose();

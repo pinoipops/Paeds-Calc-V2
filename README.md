@@ -1,71 +1,53 @@
-# Paeds Calc • Pediatric Clinical Dosing Calculator
+# PaedsCalc • Pediatric Clinical Dosing Calculator
 
-A rapid, zero-friction, minimalist pediatric dosing calculator designed specifically for **General Practitioners (GPs)** in private clinic practice and ambulatory care.
+A rapid, zero-friction, medical-grade pediatric dosing calculator and clinical growth reference suite designed specifically for point-of-care medical practice by General Practitioners, Pediatricians, and Healthcare Professionals.
 
 ---
 
-## ⚡ Key GP & Clinical Features
+## ⚡ Core Features
 
-### 1. Real-Time Reactive Dosing Engine
-- **Live Auto-Calculation:** Doses, volumes, and clinical safety ceilings update instantly on every weight keystroke or selection change—zero extra clicks needed.
-- **Default Launch State:** Automatically opens with **Paracetamol (PCM)** selected and ready for immediate entry.
-- **Quick Weight Steppers:** 1-tap adjustment buttons (`-1 kg`, `+1 kg`, `+5 kg`) for rapid weight titration.
+### 1. 📸 Save as Image (PNG Export)
+- Converts any calculated dose into a clean, high-resolution PNG prescription slip using `html2canvas`.
+- **Top Clinic Header Area:** Blank customizable area with subtle outline for clinic stamp / doctor name.
+- **Complete Details:** Includes Patient Weight, Drug Name, Dose mL & mg, Frequency, Duration, Total mL, and Total Dispensed Bottles.
+- **Mandatory Medical Disclaimer:** Features the bold red warning:
+  > **WARNING: For Medical Professionals Only. Always verify dose with BNFc/MIMS. This is not a substitute for clinical judgment. The developer is not liable for any errors.**
+- Auto-downloads the PNG and copies the image to clipboard (supported browsers).
 
-### 2. 📦 Clinic Bottle Dispensing & Duration Helper
+### 2. 📖 Reference & Growth Estimator Tab
+Add-on reference tab alongside the main Calculator:
+- **Tab A: Age → Weight Estimator:**
+  - Formula ($1\text{--}5\text{ yrs}$): $\text{Weight} = \text{Age} \times 2 + 8$
+  - Infants ($<1\text{ yr}$): $(\text{Months} \times 0.5) + 4$
+  - $>5\text{ yrs}$: WHO Average standard growth reference table.
+  - 1-tap **"Use This Weight in Calculator"** button to immediately auto-fill the main calculator.
+- **Tab B: Weight → Age Range:**
+  - Converts weight back to estimated age range with WHO development staging.
+
+### 3. ⚠️ Permanent Sticky Disclaimer Banner
+- Prominent yellow sticky banner anchored to the bottom of the viewport:
+  > **WARNING: Calculation aid only. Not medical advice. Always verify all doses before administering to patient.**
+
+### 4. 📦 Clinic Bottle Dispensing & Duration Helper
 - Embedded course duration chips (`3 Days`, `5 Days`, `7 Days`, `10 Days`).
-- Automatically computes total volume required and outputs dispensary packaging advice:
-  - *e.g., Total: 63 mL • Pack: 1 × 100 mL bottle (or 2 × 60 mL)*
-  - Automatically calculates total sachets or suppositories to dispense for the prescribed duration.
+- Automatically computes total volume required and outputs dispensary packaging recommendations (e.g., `Total: 79 mL • Pack: 1 × 100 mL bottle`).
 
-### 3. 📱 Dual Prescription Clipboard Actions
-- **`📋 Copy Rx` (EMR / CMS):** Standard formatted prescription text for your clinic management software.
-- **`📱 For Parent` (WhatsApp / Label):** Formatted, parent-friendly instructions ready to copy-paste directly to parents:
-  ```text
-  👶 *Patient Weight:* 14.5 kg
-  💊 *Medication:* Paracetamol (Syrup PCM) (250mg/5mL (50mg/mL))
-  👉 *Give:* *4.5 mL* (225 mg)
-  ⏱ *Timing:* Q4–6H PRN — Every 4–6 hourly (Max 4 doses/24h)
-  📦 *Course:* 5 Days (Total Volume: 79 mL • Pack: 1 × 100 mL bottle)
-  ⚠️ *Note:* Maximum 60mg/kg/day or adult ceiling 4000mg/day.
-  ```
+### 5. 📱 Dual Prescription Clipboard Actions
+- **`📋 Copy Rx` (EMR / CMS):** Formatted prescription text for electronic medical records.
+- **`📱 For Parent` (WhatsApp / Label):** Parent-friendly emoji-formatted instructions.
 
-### 4. 🛡️ Clinical Safety Ceilings & Contraindication Alerts
-- Automatically enforces hard single-dose and daily-dose maximums:
-  - **Paracetamol:** Max $1000\,\text{mg}$ single dose / max $4000\,\text{mg/day}$.
-  - **Ibuprofen:** Max $400\,\text{mg}$ single dose / max $1200\text{--}2400\,\text{mg/day}$.
-  - **Piriton (Chlorpheniramine):** Max $4\,\text{mg}$ single dose.
-  - **Cetirizine / Loratadine:** Max $10\,\text{mg/day}$.
-  - **Prednisolone:** Max $40\text{--}60\,\text{mg/day}$.
-  - **Buscopan (Hyoscine):** Max $10\,\text{mg}$ single dose.
-  - **Tussidex (DXM):** Max $15\,\text{mg}$ single dose.
-- **Visual Safety Banner:** Displays `⚠️ Capped at max single dose: X mg (Y mL)` when a ceiling is active.
-- **Hard Contraindication Warnings:** Prominent alerts for high-risk drugs (e.g., Promethazine $< 2\text{ yrs}$ due to fatal respiratory depression risk; Dicyclomine $< 6\text{ months}$).
-
-### 5. 🎯 1-Tap Quick-Access Favorite Chips & Search
-- Top horizontal chips bar for your most prescribed medications (`PCM`, `Ibuprofen`, `Augmentin`, `Amox`, `Cetirizine`, `Prednisolone`, `Supp PCM`, `Domperidone`, `Bisolvon`, `Smecta`).
-- Live fuzzy search bar to filter by brand name, generic name, category, or indication (*"croup"*, *"asthma"*, *"uti"*, *"fever"*, *"diarrhea"*, *"constipation"*).
-
-### 6. 🍼 Precision Infant Volume Guidance
-- Sub-milliliter volumes ($< 1.0\,\text{mL}$) display with 2 decimal places (e.g., `0.35 mL`) along with a `(Use 1 mL oral syringe)` guide.
-
-### 7. ⚖️ Emergency Weight Estimation (APLS)
-- Built-in calculator to estimate weight from age when scales are unavailable:
-  - **$< 12\text{ months}$:** $\text{Weight (kg)} = (\text{Age in months} \times 0.5) + 4$
-  - **$1\text{--}5\text{ years}$:** $\text{Weight (kg)} = (\text{Age in years} \times 2) + 8$
-  - **$6\text{--}12\text{ years}$:** $\text{Weight (kg)} = (\text{Age in years} \times 3) + 7$
-
-### 8. 🌙 Minimalist Dark Mode & PWA Offline Support
-- Toggle between Light and Dark themes (🌙 / ☀️) for on-call night duty.
-- 100% offline Progressive Web App (installable directly to iPhone or Android home screen).
+### 6. 🛡️ Clinical Safety Ceilings & Contraindication Alerts
+- Automatically enforces hard single-dose and daily-dose maximums (e.g., Paracetamol max $1000\,\text{mg}$ single, $4000\,\text{mg/day}$; Ibuprofen max $400\,\text{mg}$ single; Piriton max $4\,\text{mg}$ single).
+- Prominent contraindication banners for high-risk age groups (e.g., Promethazine $<2\text{ yrs}$, Dicyclomine $<6\text{ months}$).
 
 ---
 
-## 💊 Private GP Formulary Coverage
+## 💊 Formulary Coverage
 
 | Category | Medications Included |
 | :--- | :--- |
 | **Analgesics & Antipyretics** | Paracetamol (PCM), Ibuprofen, Ponstan (Mefenamic Acid), **Suppository Paracetamol (125mg / 250mg)**, **Suppository Voltaren / Voren (12.5mg / 25mg)** |
-| **Steroids & Respiratory** | Prednisolone Syrup ($3\,\text{mg/mL}$ & $5\,\text{mg/5mL}$), Dexamethasone Oral Solution (Croup protocol), **Singulair / Montelukast (4mg / 5mg chewable/sachet)** |
+| **Steroids & Respiratory** | Prednisolone Syrup ($3\,\text{mg/mL}$ & $5\,\text{mg/5mL}$), Dexamethasone Oral Solution (Croup protocol), **Singulair / Montelukast (4mg / 5mg)** |
 | **Antibiotics** | Amoxicillin (Standard & High-Dose AOM), Augmentin (Standard & ES), Cloxacillin, Cefixime, Cephalexin, Cefuroxime Axetil, Azithromycin |
 | **Antihistamines & Allergy** | Cetirizine, Loratadine, Chlorpheniramine (Piriton), Promethazine (Phenergan), Diphenhydramine (Benadryl) |
 | **Gastrointestinal** | Domperidone, Kaolin (Mist Kaolin Pedia), **Smecta (Diosmectite 3g sachet)**, **Duphalac / Lactulose Syrup**, Hyoscine Butylbromide (Buscopan), Dicyclomine + Simethicone (Colimix), Metoclopramide (Maxalon) |
@@ -76,6 +58,6 @@ A rapid, zero-friction, minimalist pediatric dosing calculator designed specific
 
 ## 🚀 Getting Started
 
-1. Open [`index.html`](index.html) in any modern web browser.
-2. Install as a standalone PWA on your iPhone by opening in Safari and tapping **Share** → **Add to Home Screen**.
-3. No server or node installation required—runs 100% offline.
+1. Open [`index.html`](index.html) in any modern browser.
+2. Install as a standalone PWA on iOS/Android via **Add to Home Screen**.
+3. Runs 100% offline.
