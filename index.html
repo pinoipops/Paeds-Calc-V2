@@ -1203,7 +1203,7 @@
     </div>
   </header>
 
-  <!-- Main Navigation Tabs: Calculator vs Reference -->
+  <!-- Main Navigation Tabs (shadcn/ui style) -->
   <nav class="nav-tabs" role="tablist">
     <button type="button" class="nav-tab-btn active" id="tabCalculatorBtn" role="tab" aria-selected="true">
       <span>💊</span>
@@ -1552,7 +1552,7 @@
   <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
   <div class="png-header">
     <div class="png-app-title">PaedsCalc Pro</div>
-    <div class="png-app-subtitle">Pediatric Dose Calculator</div>
+    <div class="png-app-subtitle">Arahan Dos Ubat Pesakit (Patient Dose Guide)</div>
   </div>
   <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
 
@@ -1560,7 +1560,7 @@
   <div class="png-section">
     <div class="png-row-header">
       <span class="png-emoji">👶</span>
-      <span class="png-label">PATIENT WEIGHT:</span>
+      <span class="png-label">Berat Pesakit (Weight):</span>
       <span class="png-val" id="imgPatientWeight">18 kg</span>
     </div>
   </div>
@@ -1569,17 +1569,17 @@
   <div class="png-section">
     <div class="png-row-header">
       <span class="png-emoji">💊</span>
-      <span class="png-label">MEDICATION:</span>
+      <span class="png-label">Ubat (Medication):</span>
       <span class="png-val" id="imgDrugName">Paracetamol (Syrup PCM)</span>
     </div>
-    <div class="png-indent" id="imgConcentration">Concentration: 250 mg/5 mL (50 mg/mL)</div>
+    <div class="png-indent" id="imgConcentration">Kandungan: 250 mg/5 mL (50 mg/mL)</div>
   </div>
 
   <!-- DOSE -->
   <div class="png-section">
     <div class="png-row-header">
       <span class="png-emoji">👉</span>
-      <span class="png-label">DOSE:</span>
+      <span class="png-label">Sukatan (Dose):</span>
       <span class="png-val-dose" id="imgDoseDisplay">5.4 mL (270 mg)</span>
     </div>
   </div>
@@ -1588,27 +1588,27 @@
   <div class="png-section">
     <div class="png-row-header">
       <span class="png-emoji">⏱</span>
-      <span class="png-label">FREQUENCY:</span>
+      <span class="png-label">Kekerapan (Frequency):</span>
       <span class="png-val" id="imgFrequencyDisplay">Q4–6H PRN</span>
     </div>
-    <div class="png-indent" id="imgFrequencySub">Give every 4–6 hours if needed</div>
-    <div class="png-alert" id="imgFrequencyNote">⚠️ Maximum 4 doses in 24 hours</div>
+    <div class="png-indent" id="imgFrequencySub">Beri setiap 4–6 jam jika perlu / Give every 4–6 hours if needed</div>
+    <div class="png-alert" id="imgFrequencyNote">⚠️ Maksimum 4 dos dalam 24 jam</div>
   </div>
 
   <!-- DURATION -->
   <div class="png-section">
     <div class="png-row-header">
       <span class="png-emoji">📦</span>
-      <span class="png-label">DURATION:</span>
-      <span class="png-val" id="imgDurationDays">3 days</span>
+      <span class="png-label">Tempoh (Duration):</span>
+      <span class="png-val" id="imgDurationDays">3 hari (days)</span>
     </div>
-    <div class="png-indent" id="imgTotalRequired">Total required: 57 mL</div>
-    <div class="png-indent" id="imgSupplyBottle">Supply: 1 bottle × 60 mL</div>
+    <div class="png-indent" id="imgTotalRequired">Jumlah diperlukan: 57 mL</div>
+    <div class="png-indent" id="imgSupplyBottle">Bekalan: 1 botol × 60 mL</div>
   </div>
 
   <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
   <div class="png-clinic-footer" id="imgClinicFooter">
-    Clinic Prescription (05/09/2026), to follow doctors advice.
+    Preskripsi Klinik (05/09/2026), sila ikut nasihat doktor.
   </div>
 </div>
 
@@ -2507,6 +2507,7 @@ const imgFrequencyNote = document.getElementById("imgFrequencyNote");
 const imgDurationDays = document.getElementById("imgDurationDays");
 const imgTotalRequired = document.getElementById("imgTotalRequired");
 const imgSupplyBottle = document.getElementById("imgSupplyBottle");
+const imgClinicFooter = document.getElementById("imgClinicFooter");
 
 const toast = document.getElementById("toast");
 const toastMsg = document.getElementById("toastMsg");
@@ -3207,20 +3208,20 @@ saveImageBtn.addEventListener("click", async () => {
 
   // 2. Medication & Concentration
   imgDrugName.textContent = drug.name;
-  imgConcentration.textContent = `Concentration: ${conc.label}`;
+  imgConcentration.textContent = `Kandungan (Concentration): ${conc.label}`;
 
   // 3. Dose
   imgDoseDisplay.textContent = vol ? `${vol} (${dose})` : dose;
 
   // 4. Frequency & Subtext & Alert
   imgFrequencyDisplay.textContent = freq;
-  imgFrequencySub.textContent = freqSub ? freqSub : "Give as directed by doctor";
+  imgFrequencySub.textContent = freqSub ? `${freqSub}` : "Beri mengikut arahan doktor";
 
   let alertNote = "";
   if (drug === DATA.paracetamol) {
-    alertNote = "⚠️ Maximum 4 doses in 24 hours";
+    alertNote = "⚠️ Maksimum 4 dos dalam 24 jam (Max 4 doses in 24h)";
   } else if (drug === DATA.ibuprofen) {
-    alertNote = "⚠️ Take with or after food (Max 3–4 doses in 24 hours)";
+    alertNote = "⚠️ Ambil selepas makan (Take with or after food)";
   } else if (drug.notes && drug.notes.length) {
     alertNote = `⚠️ ${drug.notes[0]}`;
   } else if (rule && rule.notes && rule.notes.length) {
@@ -3235,7 +3236,7 @@ saveImageBtn.addEventListener("click", async () => {
   }
 
   // 5. Duration & Dispensing Breakdown
-  imgDurationDays.textContent = `${selectedDays} days`;
+  imgDurationDays.textContent = `${selectedDays} hari (days)`;
 
   let dosesPerDay = 3;
   const freqUpper = (rule.frequency || freq || "").toUpperCase();
@@ -3261,23 +3262,23 @@ saveImageBtn.addEventListener("click", async () => {
     const totalMl = Math.ceil(mlPerDose * dosesPerDay * selectedDays);
     let bottleDesc = "";
     if (totalMl <= 60) {
-      bottleDesc = "1 bottle × 60 mL";
+      bottleDesc = "1 botol × 60 mL";
     } else if (totalMl <= 100) {
-      bottleDesc = "1 bottle × 100 mL (or 2 × 60 mL)";
+      bottleDesc = "1 botol × 100 mL (atau 2 × 60 mL)";
     } else if (totalMl <= 120) {
-      bottleDesc = "1 bottle × 120 mL (or 2 × 60 mL)";
+      bottleDesc = "1 botol × 120 mL (atau 2 × 60 mL)";
     } else if (totalMl <= 180) {
-      bottleDesc = "2 bottles × 100 mL (or 3 × 60 mL)";
+      bottleDesc = "2 botol × 100 mL (atau 3 × 60 mL)";
     } else {
-      bottleDesc = `${Math.ceil(totalMl / 100)} bottles × 100 mL`;
+      bottleDesc = `${Math.ceil(totalMl / 100)} botol × 100 mL`;
     }
 
-    imgTotalRequired.textContent = `Total required: ${totalMl} mL`;
-    imgSupplyBottle.textContent = `Supply: ${bottleDesc}`;
+    imgTotalRequired.textContent = `Jumlah diperlukan: ${totalMl} mL`;
+    imgSupplyBottle.textContent = `Bekalan: ${bottleDesc}`;
   } else {
     let unitName = "unit";
     if (drug.name.toLowerCase().includes("suppository")) {
-      unitName = "suppository";
+      unitName = "suppositori";
     } else if (drug.name.toLowerCase().includes("sachet") || (rule.frequencySub || "").toLowerCase().includes("sachet")) {
       unitName = "sachet";
     } else if (drug.name.toLowerCase().includes("chewable") || drug.name.toLowerCase().includes("tablet")) {
@@ -3287,50 +3288,55 @@ saveImageBtn.addEventListener("click", async () => {
     }
 
     const totalUnits = Math.ceil(dosesPerDay * selectedDays);
-    imgTotalRequired.textContent = `Total required: ${totalUnits} ${unitName}(s)`;
-    imgSupplyBottle.textContent = `Supply: ${totalUnits} ${unitName}(s)`;
+    imgTotalRequired.textContent = `Jumlah diperlukan: ${totalUnits} ${unitName}(s)`;
+    imgSupplyBottle.textContent = `Bekalan: ${totalUnits} ${unitName}(s)`;
   }
 
-  showToast("Generating prescription image... 📸");
+  // 6. Clinic Footer — auto-fill today's date in BM context
+  const _now = new Date();
+  const _dateStr = _now.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+  imgClinicFooter.textContent = `Preskripsi Klinik (${_dateStr}), sila ikut nasihat doktor.`;
+
+  showToast("Menjana imej preskripsi... 📸");
 
   if (typeof html2canvas === "undefined") {
-    showToast("Loading image renderer... please retry in a second.");
+    showToast("Memuatkan alat penjana imej... sila cuba sebentar lagi.");
     return;
   }
 
   try {
     const canvas = await html2canvas(imageExportWrapper, {
       scale: 2,
+      windowWidth: 480,
+      logging: false,
       useCORS: true,
       backgroundColor: "#ffffff"
     });
 
-    // Auto Download PNG
     const link = document.createElement("a");
     const safeName = (drug.shortName || "Dose").replace(/\s+/g, "_");
     link.download = `PaedsCalc_${safeName}_${weight}kg.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 
-    // Copy to clipboard if supported
     if (navigator.clipboard && window.ClipboardItem) {
       canvas.toBlob((blob) => {
         if (blob) {
           navigator.clipboard.write([
             new ClipboardItem({ "image/png": blob })
           ]).then(() => {
-            showToast("Downloaded & Image copied to clipboard! 📸✓");
+            showToast("Imej dimuat turun & disalin ke papan klip! 📸✓");
           }).catch(() => {
-            showToast("Prescription PNG image downloaded! 📸✓");
+            showToast("Imej PNG preskripsi berjaya dimuat turun! 📸✓");
           });
         }
       });
     } else {
-      showToast("Prescription PNG image downloaded! 📸✓");
+      showToast("Imej PNG preskripsi berjaya dimuat turun! 📸✓");
     }
   } catch (err) {
     console.error("Image generation error:", err);
-    showToast("Error creating image. Please try again.");
+    showToast("Ralat menjana imej. Sila cuba lagi.");
   }
 });
 
