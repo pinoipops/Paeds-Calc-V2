@@ -234,6 +234,34 @@
       justify-content: space-between;
     }
 
+    .chips-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: none;
+      font-size: 11.5px;
+      letter-spacing: 0;
+    }
+
+    .chip-action-link {
+      background: none;
+      border: none;
+      padding: 0 4px;
+      color: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: opacity 0.15s ease;
+    }
+
+    .chip-action-link:hover {
+      opacity: 0.8;
+    }
+
+    .chip-action-link.text-red {
+      color: var(--red-text);
+    }
+
     .chips-scroll {
       display: flex;
       gap: 8px;
@@ -1112,21 +1140,13 @@
       margin-top: 2px;
     }
 
-    .png-clinic-box {
-      padding: 22px 12px;
+    .png-clinic-footer {
+      padding: 8px 4px 2px;
       text-align: center;
-      color: #94a3b8;
+      color: #64748b;
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .png-disclaimer-red {
-      color: #dc2626;
-      font-size: 12px;
-      font-weight: 800;
-      line-height: 1.45;
-      padding-top: 4px;
+      font-weight: 600;
+      line-height: 1.4;
     }
 
     footer {
@@ -1202,7 +1222,11 @@
     <section class="chips-section" aria-label="Quick Access Favourites">
       <div class="chips-label">
         <span>Quick Prescriptions</span>
-        <span style="font-size:10px; font-weight:500;">Live 1-Tap</span>
+        <div class="chips-actions">
+          <button type="button" class="chip-action-link" id="resetFavsBtn" title="Reset to standard default favorites">↺ Reset</button>
+          <span style="opacity:0.35;">•</span>
+          <button type="button" class="chip-action-link text-red" id="clearFavsBtn" title="Remove all pinned favorite chips">🗑 Remove All</button>
+        </div>
       </div>
       <div class="chips-scroll" id="quickChips"></div>
     </section>
@@ -1215,6 +1239,10 @@
           <p>Tap to select or star medications to pin them.</p>
         </div>
         <button id="closeFavourites" type="button">×</button>
+      </div>
+      <div style="display:flex; gap:8px; margin: 10px 0 8px;">
+        <button type="button" class="icon-btn" id="drawerResetFavsBtn" style="font-size:12px; height:32px; padding:0 10px;">↺ Reset Defaults</button>
+        <button type="button" class="icon-btn" id="drawerClearFavsBtn" style="font-size:12px; height:32px; padding:0 10px; color:var(--red-text); border-color:var(--red-border);">🗑 Remove All</button>
       </div>
       <div id="favouritesList"></div>
     </section>
@@ -1579,16 +1607,8 @@
   </div>
 
   <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-  <div class="png-clinic-box">
-    [EMPTY SPACE FOR CLINIC NAME]
-  </div>
-  <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-
-  <div class="png-disclaimer-red">
-    WARNING: For Medical Professionals Only.<br>
-    Always verify dose with BNFc/MIMS.<br>
-    This is not a substitute for clinical judgment.<br>
-    The developer is not liable for any errors.
+  <div class="png-clinic-footer" id="imgClinicFooter">
+    Clinic Prescription (05/09/2026), to follow doctors advice.
   </div>
 </div>
 
@@ -2451,6 +2471,10 @@ const favouriteToggle = document.getElementById("favouriteToggle");
 const favouritesCard = document.getElementById("favouritesCard");
 const favouritesList = document.getElementById("favouritesList");
 const closeFavourites = document.getElementById("closeFavourites");
+const resetFavsBtn = document.getElementById("resetFavsBtn");
+const clearFavsBtn = document.getElementById("clearFavsBtn");
+const drawerResetFavsBtn = document.getElementById("drawerResetFavsBtn");
+const drawerClearFavsBtn = document.getElementById("drawerClearFavsBtn");
 
 const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
@@ -2688,10 +2712,12 @@ themeToggle.addEventListener("click", () => {
 /* ==================================================
    FAVOURITES & CHIPS
    ================================================== */
+const DEFAULT_FAVS = ["paracetamol", "ibuprofen", "augmentin", "amoxicillin", "cetirizine", "prednisolone", "suppPcm", "domperidone", "bisolvon", "smecta"];
+
 function loadFavourites() {
   try {
     const saved = localStorage.getItem(FAV_KEY);
-    return saved ? JSON.parse(saved) : ["paracetamol", "ibuprofen", "augmentin", "amoxicillin", "cetirizine", "prednisolone", "suppPcm", "domperidone", "bisolvon", "smecta"];
+    return saved ? JSON.parse(saved) : [...DEFAULT_FAVS];
   } catch {
     return ["paracetamol", "ibuprofen", "augmentin", "cetirizine", "suppPcm"];
   }
@@ -2699,6 +2725,24 @@ function loadFavourites() {
 
 function saveFavourites() {
   localStorage.setItem(FAV_KEY, JSON.stringify(favourites));
+}
+
+function resetFavouritesToDefault() {
+  favourites = [...DEFAULT_FAVS];
+  saveFavourites();
+  refreshShortcutState();
+  renderQuickChips();
+  renderFavourites();
+  showToast("Quick Prescriptions reset to defaults! ↺✓");
+}
+
+function clearAllFavourites() {
+  favourites = [];
+  saveFavourites();
+  refreshShortcutState();
+  renderQuickChips();
+  renderFavourites();
+  showToast("All quick favorite chips removed! (Tap ☆ on any drug to add)");
 }
 
 function toggleFavourite(key) {
@@ -2731,6 +2775,13 @@ function refreshShortcutState() {
 
 function renderQuickChips() {
   quickChips.innerHTML = "";
+  if (!favourites.length) {
+    const emptyHint = document.createElement("span");
+    emptyHint.style.cssText = "font-size:12.5px; color:var(--muted); padding:6px 2px; font-style:italic;";
+    emptyHint.textContent = "No favorite chips pinned. Tap ☆ next to any medication to pin it here, or tap 'Reset' above.";
+    quickChips.appendChild(emptyHint);
+    return;
+  }
   favourites.forEach(key => {
     const drug = DATA[key];
     if (!drug) return;
@@ -3452,6 +3503,11 @@ closeFavourites.addEventListener("click", () => {
   favouritesCard.classList.add("hidden");
   favouriteToggle.classList.remove("active");
 });
+
+if (resetFavsBtn) resetFavsBtn.addEventListener("click", resetFavouritesToDefault);
+if (clearFavsBtn) clearFavsBtn.addEventListener("click", clearAllFavourites);
+if (drawerResetFavsBtn) drawerResetFavsBtn.addEventListener("click", resetFavouritesToDefault);
+if (drawerClearFavsBtn) drawerClearFavsBtn.addEventListener("click", clearAllFavourites);
 
 if (globalFavouriteBtn) {
   globalFavouriteBtn.addEventListener("click", () => {

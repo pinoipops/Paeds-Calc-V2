@@ -1,5 +1,5 @@
 /* Paeds Calc Offline Service Worker */
-const CACHE_NAME = 'paeds-calc-v4';
+const CACHE_NAME = 'paeds-calc-v5';
 const ASSETS = [
   './',
   './index.html',
