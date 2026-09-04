@@ -32,9 +32,10 @@ Add-on reference tab alongside the main Calculator:
 - Embedded course duration chips (`3 Days`, `5 Days`, `7 Days`, `10 Days`).
 - Automatically computes total volume required and outputs dispensary packaging recommendations (e.g., `Total: 79 mL • Pack: 1 × 100 mL bottle`).
 
-### 5. 📱 Dual Prescription Clipboard Actions
+### 5. 📲 1-Tap Direct Share & Clipboard Actions
+- **`📲 Share to WhatsApp`:** Directly opens WhatsApp or mobile native share dialog with formatted, ready-to-send instructions.
 - **`📋 Copy Rx` (EMR / CMS):** Formatted prescription text for electronic medical records.
-- **`📱 For Parent` (WhatsApp / Label):** Parent-friendly emoji-formatted instructions.
+- **`📱 For Parent` (WhatsApp / Label):** Parent-friendly emoji-formatted instructions copied to clipboard.
 
 ### 6. 🛡️ Clinical Safety Ceilings & Contraindication Alerts
 - Automatically enforces hard single-dose and daily-dose maximums (e.g., Paracetamol max $1000\,\text{mg}$ single, $4000\,\text{mg/day}$; Ibuprofen max $400\,\text{mg}$ single; Piriton max $4\,\text{mg}$ single).

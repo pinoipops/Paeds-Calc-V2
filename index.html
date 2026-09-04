@@ -567,6 +567,20 @@
       border-color: #2563eb;
     }
 
+    .direct-share-btn {
+      border-color: #16a34a;
+      background: #22c55e;
+      color: #ffffff;
+      font-weight: 750;
+      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+    }
+
+    .direct-share-btn:hover {
+      background: #16a34a;
+      border-color: #15803d;
+      color: #ffffff;
+    }
+
     /* Clinic Dispensing Box */
     .dispensing-box {
       margin-top: 14px;
@@ -1004,103 +1018,115 @@
       letter-spacing: 0.2px;
     }
 
-    /* Offscreen / Export Prescription Card Template for HTML2Canvas */
+    /* ================= FEATURE 1: PNG PRESCRIPTION EXPORT SLIP ================= */
     #imageExportWrapper {
       position: fixed;
       left: -9999px;
       top: -9999px;
-      width: 580px;
+      width: 480px;
       background: #ffffff;
       color: #0f172a;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 24px;
-      border: 1px solid #cbd5e1;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px 28px;
+      border: 1.5px solid #cbd5e1;
       border-radius: 12px;
+      box-sizing: border-box;
+      line-height: 1.45;
     }
 
-    .img-clinic-header {
-      border: 1.5px dashed #94a3b8;
-      border-radius: 8px;
-      padding: 16px;
-      text-align: center;
-      color: #64748b;
+    .png-divider {
+      color: #94a3b8;
       font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 18px;
-      background: #f8fafc;
-      min-height: 60px;
-      display: grid;
-      place-items: center;
+      letter-spacing: -1px;
+      text-align: center;
+      user-select: none;
+      margin: 8px 0;
+      line-height: 1;
+      font-weight: bold;
     }
 
-    .img-title-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #2563eb;
-      padding-bottom: 8px;
-      margin-bottom: 14px;
+    .png-header {
+      text-align: center;
+      padding: 4px 0;
     }
 
-    .img-app-name {
-      font-size: 20px;
+    .png-app-title {
+      font-size: 22px;
       font-weight: 800;
-      color: #2563eb;
+      color: #0f172a;
+      letter-spacing: -0.5px;
     }
 
-    .img-date {
-      font-size: 12px;
-      color: #64748b;
+    .png-app-subtitle {
+      font-size: 13.5px;
+      color: #475569;
       font-weight: 600;
+      margin-top: 2px;
     }
 
-    .img-field-row {
+    .png-section {
+      margin: 12px 0;
+      font-size: 15px;
+    }
+
+    .png-row-header {
       display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 14px;
+      align-items: baseline;
+      gap: 8px;
     }
 
-    .img-field-row strong {
+    .png-emoji {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .png-label {
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.3px;
+    }
+
+    .png-val {
+      font-weight: 700;
       color: #0f172a;
     }
 
-    .img-highlight-box {
-      background: #f0fdf4;
-      border: 1.5px solid #86efac;
-      border-radius: 8px;
-      padding: 14px;
-      margin: 14px 0;
-      text-align: center;
-    }
-
-    .img-dose-big {
-      font-size: 26px;
+    .png-val-dose {
+      font-size: 18px;
       font-weight: 800;
-      color: #15803d;
+      color: #16a34a;
     }
 
-    .img-dispense-box {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 8px;
-      padding: 10px 14px;
+    .png-indent {
+      padding-left: 28px;
+      font-size: 13.5px;
+      color: #334155;
+      margin-top: 2px;
+    }
+
+    .png-alert {
+      padding-left: 28px;
       font-size: 13px;
-      color: #1e40af;
-      margin-bottom: 16px;
-      line-height: 1.4;
+      color: #b45309;
+      font-weight: 600;
+      margin-top: 2px;
     }
 
-    .img-mandatory-disclaimer {
-      border-top: 2px solid #ef4444;
-      padding-top: 10px;
-      color: #b91c1c;
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1.4;
-      text-transform: uppercase;
+    .png-clinic-box {
+      padding: 22px 12px;
       text-align: center;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .png-disclaimer-red {
+      color: #dc2626;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.45;
+      padding-top: 4px;
     }
 
     footer {
@@ -1322,8 +1348,12 @@
         <div id="calculationText"></div>
       </div>
 
-      <!-- Feature 1: Save as Image Action Button -->
+      <!-- Feature 1 & Share Actions -->
       <div class="result-bottom-actions">
+        <button type="button" class="save-img-btn direct-share-btn" id="directShareBtn" title="Directly share prescription via WhatsApp">
+          <span>📲</span>
+          <span>Share to WhatsApp</span>
+        </button>
         <button type="button" class="save-img-btn" id="saveImageBtn" title="Export high-resolution PNG image with official medical disclaimer">
           <span>📸</span>
           <span>Save as Image (PNG)</span>
@@ -1491,44 +1521,70 @@
 
 <!-- ================= FEATURE 1: IMAGE EXPORT WRAPPER (FOR HTML2CANVAS) ================= -->
 <div id="imageExportWrapper">
-  <!-- Leave empty space at top for user to add clinic name / stamp -->
-  <div class="img-clinic-header">
-    <span>[ CLINIC / DOCTOR'S NAME &amp; STAMP AREA ]</span>
+  <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+  <div class="png-header">
+    <div class="png-app-title">PaedsCalc Pro</div>
+    <div class="png-app-subtitle">Pediatric Dose Calculator</div>
+  </div>
+  <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+  <!-- PATIENT WEIGHT -->
+  <div class="png-section">
+    <div class="png-row-header">
+      <span class="png-emoji">👶</span>
+      <span class="png-label">PATIENT WEIGHT:</span>
+      <span class="png-val" id="imgPatientWeight">18 kg</span>
+    </div>
   </div>
 
-  <div class="img-title-bar">
-    <div class="img-app-name">✚ PaedsCalc</div>
-    <div class="img-date" id="imgExportDate">Date: —</div>
+  <!-- MEDICATION -->
+  <div class="png-section">
+    <div class="png-row-header">
+      <span class="png-emoji">💊</span>
+      <span class="png-label">MEDICATION:</span>
+      <span class="png-val" id="imgDrugName">Paracetamol (Syrup PCM)</span>
+    </div>
+    <div class="png-indent" id="imgConcentration">Concentration: 250 mg/5 mL (50 mg/mL)</div>
   </div>
 
-  <div class="img-field-row">
-    <span>Patient Weight:</span>
-    <strong id="imgPatientWeight">— kg</strong>
+  <!-- DOSE -->
+  <div class="png-section">
+    <div class="png-row-header">
+      <span class="png-emoji">👉</span>
+      <span class="png-label">DOSE:</span>
+      <span class="png-val-dose" id="imgDoseDisplay">5.4 mL (270 mg)</span>
+    </div>
   </div>
 
-  <div class="img-field-row">
-    <span>Medication:</span>
-    <strong id="imgDrugName">—</strong>
+  <!-- FREQUENCY -->
+  <div class="png-section">
+    <div class="png-row-header">
+      <span class="png-emoji">⏱</span>
+      <span class="png-label">FREQUENCY:</span>
+      <span class="png-val" id="imgFrequencyDisplay">Q4–6H PRN</span>
+    </div>
+    <div class="png-indent" id="imgFrequencySub">Give every 4–6 hours if needed</div>
+    <div class="png-alert" id="imgFrequencyNote">⚠️ Maximum 4 doses in 24 hours</div>
   </div>
 
-  <div class="img-field-row">
-    <span>Formulation:</span>
-    <strong id="imgConcentration">—</strong>
+  <!-- DURATION -->
+  <div class="png-section">
+    <div class="png-row-header">
+      <span class="png-emoji">📦</span>
+      <span class="png-label">DURATION:</span>
+      <span class="png-val" id="imgDurationDays">3 days</span>
+    </div>
+    <div class="png-indent" id="imgTotalRequired">Total required: 57 mL</div>
+    <div class="png-indent" id="imgSupplyBottle">Supply: 1 bottle × 60 mL</div>
   </div>
 
-  <div class="img-highlight-box">
-    <div style="font-size: 12px; font-weight: 750; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">CALCULATED DOSE PER DOSE</div>
-    <div class="img-dose-big" id="imgDoseDisplay">—</div>
-    <div style="font-size: 15px; font-weight: 700; color: #1e293b; margin-top: 4px;" id="imgFrequencyDisplay">—</div>
+  <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+  <div class="png-clinic-box">
+    [EMPTY SPACE FOR CLINIC NAME]
   </div>
+  <div class="png-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
 
-  <div class="img-dispense-box">
-    <strong>Course &amp; Dispensing:</strong>
-    <div id="imgDispenseDetails">—</div>
-  </div>
-
-  <!-- Mandatory Bold Red Warning -->
-  <div class="img-mandatory-disclaimer">
+  <div class="png-disclaimer-red">
     WARNING: For Medical Professionals Only.<br>
     Always verify dose with BNFc/MIMS.<br>
     This is not a substitute for clinical judgment.<br>
@@ -2384,6 +2440,7 @@ const safetyBanner = document.getElementById("safetyBanner");
 const copyRxBtn = document.getElementById("copyRxBtn");
 const copyParentBtn = document.getElementById("copyParentBtn");
 const saveImageBtn = document.getElementById("saveImageBtn");
+const directShareBtn = document.getElementById("directShareBtn");
 const durationChips = document.getElementById("durationChips");
 const dispenseResult = document.getElementById("dispenseResult");
 
@@ -2416,13 +2473,16 @@ const estAgeDetails = document.getElementById("estAgeDetails");
 
 /* Image Export Elements */
 const imageExportWrapper = document.getElementById("imageExportWrapper");
-const imgExportDate = document.getElementById("imgExportDate");
 const imgPatientWeight = document.getElementById("imgPatientWeight");
 const imgDrugName = document.getElementById("imgDrugName");
 const imgConcentration = document.getElementById("imgConcentration");
 const imgDoseDisplay = document.getElementById("imgDoseDisplay");
 const imgFrequencyDisplay = document.getElementById("imgFrequencyDisplay");
-const imgDispenseDetails = document.getElementById("imgDispenseDetails");
+const imgFrequencySub = document.getElementById("imgFrequencySub");
+const imgFrequencyNote = document.getElementById("imgFrequencyNote");
+const imgDurationDays = document.getElementById("imgDurationDays");
+const imgTotalRequired = document.getElementById("imgTotalRequired");
+const imgSupplyBottle = document.getElementById("imgSupplyBottle");
 
 const toast = document.getElementById("toast");
 const toastMsg = document.getElementById("toastMsg");
@@ -3084,24 +3144,103 @@ function showError(msg) {
 saveImageBtn.addEventListener("click", async () => {
   const drug = DATA[medicationSelect.value];
   const conc = drug.concentrations[parseInt(concentrationSelect.value, 10) || 0];
+  const rule = drug.regimens[parseInt(regimenSelect.value, 10) || 0];
   const weight = weightInput.value || "—";
   const dose = doseValue.textContent;
   const vol = volumeValue.textContent.replace(/[()]/g, "").trim();
   const freq = frequencyValue.textContent;
   const freqSub = frequencySub.textContent;
-  const dispPlain = dispenseResult.textContent.replace(/\s+/g, " ").trim();
 
-  // Populate Image Export Card
-  const now = new Date();
-  imgExportDate.textContent = `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+  // 1. Patient Weight
   imgPatientWeight.textContent = `${weight} kg`;
-  imgDrugName.textContent = drug.name;
-  imgConcentration.textContent = conc.label;
-  imgDoseDisplay.textContent = vol ? `${vol} (${dose})` : dose;
-  imgFrequencyDisplay.textContent = `${freq} ${freqSub ? `— ${freqSub}` : ""}`;
-  imgDispenseDetails.textContent = `${selectedDays} Days Course • ${dispPlain}`;
 
-  showToast("Generating image... 📸");
+  // 2. Medication & Concentration
+  imgDrugName.textContent = drug.name;
+  imgConcentration.textContent = `Concentration: ${conc.label}`;
+
+  // 3. Dose
+  imgDoseDisplay.textContent = vol ? `${vol} (${dose})` : dose;
+
+  // 4. Frequency & Subtext & Alert
+  imgFrequencyDisplay.textContent = freq;
+  imgFrequencySub.textContent = freqSub ? freqSub : "Give as directed by doctor";
+
+  let alertNote = "";
+  if (drug === DATA.paracetamol) {
+    alertNote = "⚠️ Maximum 4 doses in 24 hours";
+  } else if (drug === DATA.ibuprofen) {
+    alertNote = "⚠️ Take with or after food (Max 3–4 doses in 24 hours)";
+  } else if (drug.notes && drug.notes.length) {
+    alertNote = `⚠️ ${drug.notes[0]}`;
+  } else if (rule && rule.notes && rule.notes.length) {
+    alertNote = `⚠️ ${rule.notes[0]}`;
+  }
+
+  if (alertNote) {
+    imgFrequencyNote.textContent = alertNote;
+    imgFrequencyNote.classList.remove("hidden");
+  } else {
+    imgFrequencyNote.classList.add("hidden");
+  }
+
+  // 5. Duration & Dispensing Breakdown
+  imgDurationDays.textContent = `${selectedDays} days`;
+
+  let dosesPerDay = 3;
+  const freqUpper = (rule.frequency || freq || "").toUpperCase();
+  if (freqUpper.includes("BD") || freqUpper.includes("TWICE")) {
+    dosesPerDay = 2;
+  } else if (freqUpper.includes("TDS") || freqUpper.includes("THREE")) {
+    dosesPerDay = 3;
+  } else if (freqUpper.includes("QID") || freqUpper.includes("FOUR")) {
+    dosesPerDay = 4;
+  } else if (freqUpper.includes("OD") || freqUpper.includes("ONCE")) {
+    dosesPerDay = 1;
+  } else if (freqUpper.includes("STAT")) {
+    dosesPerDay = 1;
+  } else if (freqUpper.includes("Q4–6H") || freqUpper.includes("Q6H")) {
+    dosesPerDay = 3.5;
+  } else if (freqUpper.includes("Q6–8H") || freqUpper.includes("Q8H")) {
+    dosesPerDay = 3;
+  }
+
+  const mlMatch = vol.match(/([\d.]+)\s*mL/i);
+  if (mlMatch) {
+    const mlPerDose = parseFloat(mlMatch[1]);
+    const totalMl = Math.ceil(mlPerDose * dosesPerDay * selectedDays);
+    let bottleDesc = "";
+    if (totalMl <= 60) {
+      bottleDesc = "1 bottle × 60 mL";
+    } else if (totalMl <= 100) {
+      bottleDesc = "1 bottle × 100 mL (or 2 × 60 mL)";
+    } else if (totalMl <= 120) {
+      bottleDesc = "1 bottle × 120 mL (or 2 × 60 mL)";
+    } else if (totalMl <= 180) {
+      bottleDesc = "2 bottles × 100 mL (or 3 × 60 mL)";
+    } else {
+      bottleDesc = `${Math.ceil(totalMl / 100)} bottles × 100 mL`;
+    }
+
+    imgTotalRequired.textContent = `Total required: ${totalMl} mL`;
+    imgSupplyBottle.textContent = `Supply: ${bottleDesc}`;
+  } else {
+    let unitName = "unit";
+    if (drug.name.toLowerCase().includes("suppository")) {
+      unitName = "suppository";
+    } else if (drug.name.toLowerCase().includes("sachet") || (rule.frequencySub || "").toLowerCase().includes("sachet")) {
+      unitName = "sachet";
+    } else if (drug.name.toLowerCase().includes("chewable") || drug.name.toLowerCase().includes("tablet")) {
+      unitName = "tablet";
+    } else if (drug.name.toLowerCase().includes("neb") || drug.name.toLowerCase().includes("udv")) {
+      unitName = "vial";
+    }
+
+    const totalUnits = Math.ceil(dosesPerDay * selectedDays);
+    imgTotalRequired.textContent = `Total required: ${totalUnits} ${unitName}(s)`;
+    imgSupplyBottle.textContent = `Supply: ${totalUnits} ${unitName}(s)`;
+  }
+
+  showToast("Generating prescription image... 📸");
 
   if (typeof html2canvas === "undefined") {
     showToast("Loading image renderer... please retry in a second.");
@@ -3201,6 +3340,63 @@ copyParentBtn.addEventListener("click", () => {
     fallbackCopy(parentText, "Parent instructions copied! 📱✓");
   });
 });
+
+/* Direct 1-Tap Share to WhatsApp / Mobile Share */
+if (directShareBtn) {
+  directShareBtn.addEventListener("click", () => {
+    const drug = DATA[medicationSelect.value];
+    const conc = drug.concentrations[parseInt(concentrationSelect.value, 10) || 0];
+    const rule = drug.regimens[parseInt(regimenSelect.value, 10) || 0];
+    const weight = weightInput.value;
+
+    const dose = doseValue.textContent;
+    const vol = volumeValue.textContent.replace(/[()]/g, "").trim();
+    const freq = frequencyValue.textContent;
+    const freqSub = frequencySub.textContent;
+    const dispPlain = dispenseResult.textContent.replace(/\s+/g, " ").trim();
+
+    let message = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `          *PaedsCalc Pro*\n`;
+    message += `      *Pediatric Dose Calculator*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+    message += `👶 *PATIENT WEIGHT:* ${weight ? `${weight} kg` : "—"}\n\n`;
+    message += `💊 *MEDICATION:* ${drug.name}\n`;
+    message += `   Concentration: ${conc.label}\n\n`;
+    message += `👉 *DOSE:* ${vol ? `*${vol}* (${dose})` : `*${dose}*`}\n\n`;
+    message += `⏱ *FREQUENCY:* ${freq}\n`;
+    if (freqSub) message += `   ${freqSub}\n`;
+
+    if (drug === DATA.paracetamol) {
+      message += `   ⚠️ Maximum 4 doses in 24 hours\n`;
+    } else if (drug === DATA.ibuprofen) {
+      message += `   ⚠️ Take with or after food (Max 3–4 doses in 24h)\n`;
+    } else if (drug.notes && drug.notes.length) {
+      message += `   ⚠️ ${drug.notes[0]}\n`;
+    } else if (rule && rule.notes && rule.notes.length) {
+      message += `   ⚠️ ${rule.notes[0]}\n`;
+    }
+
+    message += `\n📦 *DURATION:* ${selectedDays} days\n`;
+    message += `   ${dispPlain}\n\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `_Please follow doctor's advice & directions._`;
+
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+
+    // Try native Mobile Web Share if supported on mobile device
+    if (navigator.share && /mobile|android|iphone|ipad/i.test(navigator.userAgent)) {
+      navigator.share({
+        title: `PaedsCalc - ${drug.shortName || drug.name}`,
+        text: message
+      }).catch(() => {
+        window.open(waUrl, "_blank");
+      });
+    } else {
+      window.open(waUrl, "_blank");
+    }
+  });
+}
 
 function fallbackCopy(text, msg) {
   const temp = document.createElement("textarea");
