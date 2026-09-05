@@ -1,33 +1,17 @@
 {
-  "id": "paeds-calc-app",
-  "name": "Paeds Calc • Pediatric Dose Calculator",
-  "short_name": "Paeds Calc",
+  "name": "PaedsCalc • Pediatric Dose Calculator",
+  "short_name": "PaedsCalc",
   "description": "Minimalist pediatric clinical dose calculator for point-of-care medical practice.",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "orientation": "portrait-primary",
-  "background_color": "#0f172a",
+  "background_color": "#f8fafc",
   "theme_color": "#2563eb",
-  "categories": ["medical", "health", "productivity", "utilities"],
   "icons": [
     {
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml"
+      "purpose": "any maskable"
     }
   ]
 }
