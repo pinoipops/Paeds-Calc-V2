@@ -7,13 +7,13 @@
   <meta name="description" content="Minimalist pediatric clinical dose calculator for point-of-care medical practice.">
   <title>PaedsCalc • Pediatric Dose Calculator</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" href="icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="PaedsCalc">
-  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.png">
   
-  <!-- html2canvas for Save as Image feature -->
+  <!-- html2canvas for Clipboard Image feature -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -686,12 +686,6 @@
       margin-bottom: 12px;
     }
 
-    .contra-alert {
-      border-color: var(--red-border);
-      background: var(--red-soft);
-      color: var(--red-text);
-    }
-
     .calculation-box {
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -923,7 +917,6 @@
       opacity: 1;
     }
 
-    /* Permanent Sticky Disclaimer Banner (Requirement 1 & 2: Professional & Simple) */
     .sticky-disclaimer-banner {
       position: fixed;
       bottom: 0;
@@ -945,7 +938,7 @@
       position: fixed;
       left: -9999px;
       top: -9999px;
-      width: 600px; /* Larger high-res width for clear full-screen mobile viewing */
+      width: 600px;
       background: #ffffff;
       color: #0f172a;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -1157,7 +1150,7 @@
         </div>
       </div>
 
-      <!-- Medication Field with Star (Search Box successfully removed as requested) -->
+      <!-- Medication Field with Star -->
       <div class="field">
         <div class="field-header">
           <label for="medication">Medication</label>
@@ -1208,9 +1201,9 @@
             <span>📋</span>
             <span>Copy Rx</span>
           </button>
-          <button type="button" class="copy-rx-btn copy-parent-btn" id="saveImageBtn" title="Save clear high-res prescription image for parent">
-            <span>📸</span>
-            <span>For Parent (PNG)</span>
+          <button type="button" class="copy-rx-btn copy-parent-btn" id="saveImageBtn" title="Copy crystal-clear image directly to clipboard for parent">
+            <span>📋🖼️</span>
+            <span>Copy Image for Parent</span>
           </button>
         </div>
       </div>
@@ -1409,12 +1402,12 @@
 
 </main>
 
-<!-- ================= PERMANENT STICKY DISCLAIMER BANNER (Requirement 1 & 2: Remade simple & professional) ================= -->
+<!-- ================= PERMANENT STICKY DISCLAIMER BANNER ================= -->
 <aside class="sticky-disclaimer-banner" role="alert" aria-live="polite">
   <span>⚠️ Medical calculation aid only. Always verify all clinical doses before administering.</span>
 </aside>
 
-<!-- ================= PNG EXPORT SLIP FOR PARENTS (Requirement 3: Clean, crystal clear, professional layout) ================= -->
+<!-- ================= PNG EXPORT SLIP FOR CLIPBOARD ================= -->
 <div id="imageExportWrapper">
   <div class="png-header">
     <div class="png-app-title">PAEDSCALC CLINIC PRESCRIPTION</div>
@@ -2281,7 +2274,7 @@ function showError(msg) {
 }
 
 /* ==================================================
-   SAVE HIGH-RES PNG IMAGE FOR PARENTS (Requirement 3: Clean, crystal clear text)
+   COPY HIGH-RES PNG IMAGE DIRECTLY TO CLIPBOARD
    ================================================== */
 saveImageBtn.addEventListener("click", async () => {
   const drug = DATA[medicationSelect.value];
@@ -2332,7 +2325,7 @@ saveImageBtn.addEventListener("click", async () => {
     imgSupplyBottle.textContent = `Dispense prescribed amount for ${selectedDays} days`;
   }
 
-  showToast("Generating high-res parent prescription image... 📸");
+  showToast("Menyalin imej preskripsi ke clipboard... 📋");
 
   try {
     const canvas = await html2canvas(imageExportWrapper, {
@@ -2343,15 +2336,26 @@ saveImageBtn.addEventListener("click", async () => {
       backgroundColor: "#ffffff"
     });
 
-    const link = document.createElement("a");
-    const safeName = (drug.shortName || "Dose").replace(/\s+/g, "_");
-    link.download = `Prescription_${safeName}_${weight}kg.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    showToast("Prescription image downloaded successfully! 📸✓");
+    if (navigator.clipboard && window.ClipboardItem) {
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ "image/png": blob })
+            ]);
+            showToast("Imej disalin! Terus paste (tampal) ke WhatsApp 📋✓");
+          } catch (clipErr) {
+            console.error("Clipboard write error:", clipErr);
+            showToast("Gagal salin ke clipboard. Sila semak kebenaran pelayar.");
+          }
+        }
+      }, "image/png");
+    } else {
+      showToast("Pelayar anda tidak menyokong fungsi salin imej terus.");
+    }
   } catch (err) {
     console.error("Image generation error:", err);
-    showToast("Error generating image.");
+    showToast("Ralat menjana imej preskripsi.");
   }
 });
 
